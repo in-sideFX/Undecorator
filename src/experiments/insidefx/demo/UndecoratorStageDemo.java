@@ -24,7 +24,7 @@ public class UndecoratorStageDemo extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         Undecorator undecorator = new Undecorator(stage,root);
      
-        undecorator.getChildren().add(root);
+        //undecorator.getChildren().add(root);
 
         Scene scene = new Scene(undecorator);
 

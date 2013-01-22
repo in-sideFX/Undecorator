@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+  <children>
+    <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="43.0" text="X" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0" />
+    <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="43.0" text="-" AnchorPane.rightAnchor="43.0" AnchorPane.topAnchor="1.0" />
+    <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="43.0" text="_" AnchorPane.rightAnchor="86.0" AnchorPane.topAnchor="1.0" />
+    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" text="X" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+  </children>
+</AnchorPane>
