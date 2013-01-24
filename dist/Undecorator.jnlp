@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Undecorator.jar" size="108257" download="eager" />
+    <jar href="Undecorator.jar" size="109699" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Undecorator" >
     <param name="requiredFXVersion" value="2.2+"/>

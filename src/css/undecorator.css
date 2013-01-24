@@ -13,45 +13,45 @@
 *	Minmize button
 */
 .decoration-button-minimize{
-  -fx-background-radius: 0;
-	-fx-border-style: null;
-	-fx-background-image:url("../img/minimize.png");
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-image:url("../img/minimize.png");
 }
 
 .decoration-button-minimize:hover{
-	-fx-blend-mode:lighten;
+    -fx-background-image:url("../img/minimize-hover.png");
 }
 /*
 *	Maximize button
 */
 .decoration-button-maximize{
-  -fx-background-radius: 0;
-	-fx-border-style: null;
-	-fx-background-image:url("../img/maximize.png");
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-image:url("../img/maximize.png");
 }
 .decoration-button-maximize:hover{
-	-fx-blend-mode:lighten;
+    -fx-background-image:url("../img/maximize-hover.png");
 }
 /*
 *	Close button
 */
 .decoration-button-close{
-  -fx-background-radius: 0;
-	-fx-border-style: null;
-	-fx-background-image:url("../img/close.png");
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-image:url("../img/close.png");
 }
 .decoration-button-close:hover{
-	-fx-blend-mode:hard-light;
+    -fx-background-image:url("../img/close-hover.png");
 }
 
 /*
 *	Resize button
 */
 .decoration-button-resize{
-  -fx-background-radius: 0;
-	-fx-border-style: null;
-	-fx-background-image:url("../img/resizeSE.png");
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-image:url("../img/resizeSE.png");
 }
 .decoration-button-resize:hover{
-	-fx-blend-mode:hard-light;
+    -fx-background-image:url("../img/resizeSE-hover.png");
 }
