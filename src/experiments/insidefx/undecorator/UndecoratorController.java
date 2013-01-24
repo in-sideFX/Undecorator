@@ -1,4 +1,4 @@
-package experiments.insideFX.undecorator;
+package experiments.insidefx.undecorator;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;

@@ -1,9 +1,9 @@
 /**
  * Demo purpose
  */
-package experiments.insideFX.demo;
+package experiments.insidefx.demo;
 
-import experiments.insideFX.undecorator.Undecorator;
+import experiments.insidefx.undecorator.Undecorator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

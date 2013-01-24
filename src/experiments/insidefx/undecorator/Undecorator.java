@@ -1,4 +1,4 @@
-package experiments.insideFX.undecorator;
+package experiments.insidefx.undecorator;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -9,11 +9,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
@@ -54,8 +51,10 @@ public class Undecorator extends StackPane {
         UndecoratorController.setAsResizable(stage, shadowRectangle, RESIZE_PADDING, SHADOW_WIDTH);
 
         try {
-            stageDecoration = FXMLLoader.load(getClass().getResource("stagedecoration.fxml"));
-        } catch (IOException ex) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("stagedecoration.fxml"));
+            fxmlLoader.setController(new StagedecorationController());
+            stageDecoration = (Pane) fxmlLoader.load();
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
         }
         /*
@@ -70,7 +69,7 @@ public class Undecorator extends StackPane {
             protected boolean containsBounds(double d, double d1) {
                 ObservableList<Node> children = stageDecoration.getChildren();
                 for (Node node : children) {
-                    if(node.isMouseTransparent()) {
+                    if (node.isMouseTransparent()) {
                         continue;
                     }
                     Bounds boundsInParent = node.getBoundsInParent();

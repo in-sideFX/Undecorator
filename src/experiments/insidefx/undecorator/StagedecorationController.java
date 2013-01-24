@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package experiments.insidefx.undecorator;
 
 import java.net.URL;
@@ -9,7 +13,6 @@ import javafx.scene.control.Button;
 /**
  * FXML Controller class
  *
- * @author In-SideFX
  */
 public class StagedecorationController implements Initializable {
     @FXML
@@ -27,5 +30,6 @@ public class StagedecorationController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        System.err.println("");
     }    
 }

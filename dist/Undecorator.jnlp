@@ -2,7 +2,7 @@
 <jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Undecorator.jnlp">
   <information>
     <title>Undecorator</title>
-    <vendor>I051536</vendor>
+    <vendor>In-SideFX</vendor>
     <description>Sample JavaFX 2.0 application.</description>
     <offline-allowed/>
   </information>
@@ -11,11 +11,11 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Undecorator.jar" size="109699" download="eager" />
+    <jar href="Undecorator.jar" size="43225" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Undecorator" >
     <param name="requiredFXVersion" value="2.2+"/>
   </applet-desc>
-  <jfx:javafx-desc  width="800" height="600" main-class="experiments.insideFX.demo.UndecoratorStageDemo"  name="Undecorator" />
+  <jfx:javafx-desc  width="800" height="600" main-class="experiments.insidefx.demo.UndecoratorStageDemo"  name="Undecorator" />
   <update check="always"/>
 </jnlp>
