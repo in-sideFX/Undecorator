@@ -7,15 +7,17 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventDispatchChain;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -28,9 +30,9 @@ import javafx.stage.Stage;
 public class Undecorator extends StackPane {
 
     Node clientArea;
-    Parent decoration = null;
+    Pane stageDecoration = null;
     Rectangle shadowRectangle;
-    BorderPane borderPane;
+    BorderPane decorationWrapper;
     static public int SHADOW_WIDTH = 15;
     static public int RESIZE_PADDING = 15;
     DropShadow dsFocused;
@@ -52,39 +54,39 @@ public class Undecorator extends StackPane {
         UndecoratorController.setAsResizable(stage, shadowRectangle, RESIZE_PADDING, SHADOW_WIDTH);
 
         try {
-            decoration = FXMLLoader.load(getClass().getResource("decoration.fxml"));
+            stageDecoration = FXMLLoader.load(getClass().getResource("stagedecoration.fxml"));
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
         }
-        borderPane = new BorderPane() {
+        /*
+         * Create this wrapper to make stageDecoration pane transparent for mouse event
+         */
+        decorationWrapper = new BorderPane() {
+            /**
+             * Ideally must not override deprecated method, but at this jfx
+             * stage, there is no good API to pick component under mouse.
+             */
             @Override
-            public EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
-                return root.buildEventDispatchChain(tail);
-//                return super.buildEventDispatchChain(tail);
+            protected boolean containsBounds(double d, double d1) {
+                ObservableList<Node> children = stageDecoration.getChildren();
+                for (Node node : children) {
+                    if(node.isMouseTransparent()) {
+                        continue;
+                    }
+                    Bounds boundsInParent = node.getBoundsInParent();
+                    if (boundsInParent.contains(d, d1)) {
+                        return true;
+                    }
+                }
+                return false;
             }
-//            @Override
-//            public boolean contains(double d, double d1) {
-//                ObservableList<Node> onechild = getChildren();
-//                Pane root = (Pane)onechild.get(0);
-//                ObservableList<Node> children = root.getChildren();
-//                for(Node node: children){
-//                    if(node.contains(d, d1)){
-//                        return true;
-//                    }
-//                }
-//                return false;
-//            }
         };
-     //   borderPane.setCenter(decoration);
-        //    decoration = borderPane;
-
-        // Take shadow into account        
-        //shadowRectangle.setPickOnBounds(true);
+        decorationWrapper.setCenter(stageDecoration);
 
         // TODO: how to programmatically get css values? wait for JavaFX custom CSS
         shadowRectangle.getStyleClass().add("undecorator-background");
 
-        super.getChildren().addAll(shadowRectangle, root);//, borderPane);
+        super.getChildren().addAll(shadowRectangle, root, decorationWrapper);
 
         // UndecoratorController.setAsDraggable(stage, shadowRectangle);
 
@@ -140,17 +142,16 @@ public class Undecorator extends StackPane {
                 shadowRectangle.setHeight(h - SHADOW_WIDTH * 2);
                 shadowRectangle.setX(SHADOW_WIDTH);
                 shadowRectangle.setY(SHADOW_WIDTH);
-            } else if (node == borderPane) {
-                node.resize(w - SHADOW_WIDTH * 2, h - SHADOW_WIDTH * 2);
-                node.setLayoutX(SHADOW_WIDTH);
-                node.setLayoutY(SHADOW_WIDTH);
+            } else if (node == decorationWrapper) {
+                decorationWrapper.resize(w - SHADOW_WIDTH * 2, h - SHADOW_WIDTH * 2);
+                decorationWrapper.setLayoutX(SHADOW_WIDTH);
+                decorationWrapper.setLayoutY(SHADOW_WIDTH);
             } else {
                 node.resize(w - SHADOW_WIDTH * 2 - RESIZE_PADDING * 2, h - SHADOW_WIDTH * 2 - RESIZE_PADDING * 2);
                 node.setLayoutX(SHADOW_WIDTH + RESIZE_PADDING);
                 node.setLayoutY(SHADOW_WIDTH + RESIZE_PADDING);
             }
         }
-
     }
 
     static void loadConfig() {

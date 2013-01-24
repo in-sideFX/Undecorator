@@ -1,14 +1,57 @@
 /* 
-    Document   : windowenhancer
+    Document   : Undecorator
     Created on : Jan 15, 2013, 8:42:25 AM
     Author     : In-SideFX
     Description:
-        Purpose of the stylesheet follows.
+        Demo purpose
 */
 
 .undecorator-background {
     -fx-fill: #ffffff;
 }
+/*
+*	Minmize button
+*/
+.decoration-button-minimize{
+  -fx-background-radius: 0;
+	-fx-border-style: null;
+	-fx-background-image:url("../img/minimize.png");
+}
 
+.decoration-button-minimize:hover{
+	-fx-blend-mode:lighten;
+}
+/*
+*	Maximize button
+*/
+.decoration-button-maximize{
+  -fx-background-radius: 0;
+	-fx-border-style: null;
+	-fx-background-image:url("../img/maximize.png");
+}
+.decoration-button-maximize:hover{
+	-fx-blend-mode:lighten;
+}
+/*
+*	Close button
+*/
+.decoration-button-close{
+  -fx-background-radius: 0;
+	-fx-border-style: null;
+	-fx-background-image:url("../img/close.png");
+}
+.decoration-button-close:hover{
+	-fx-blend-mode:hard-light;
+}
 
-    
+/*
+*	Resize button
+*/
+.decoration-button-resize{
+  -fx-background-radius: 0;
+	-fx-border-style: null;
+	-fx-background-image:url("../img/resizeSE.png");
+}
+.decoration-button-resize:hover{
+	-fx-blend-mode:hard-light;
+}
