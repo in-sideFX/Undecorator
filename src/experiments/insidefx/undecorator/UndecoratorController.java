@@ -1,39 +1,77 @@
 package experiments.insidefx.undecorator;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
  *
- * @author in-sideFX
- * TODO: Manage minimum size, Multiple screen, Maximization,
- * Inject right click, icons, API
+ * @author in-sideFX TODO: Manage minimum size, Multiple screen, Maximization,
+ * Inject right click, icons, API + Window Listener, tooltip, no static!, focus on icons
  */
 public class UndecoratorController {
 
     private static double initX;
     private static double initY;
-    Scene scene;
+    private static double newX;
+    private static double newY;
     private static int RESIZE_PADDING;
     private static int SHADOW_WIDTH;
-    private static double dragOffsetX, dragOffsetY;
+//    private static double dragOffsetX, dragOffsetY;
+    static Undecorator undecorator;
+    static BoundingBox savedBounds;
 
-    public UndecoratorController() {
+    public UndecoratorController(Undecorator ud) {
+        undecorator = ud;
     }
 
-    public static void setAsResizable(final Window stage, final Node node, int PADDING, int SHADOW) {
+    public static void maximize(Stage stage) {
+        if (savedBounds != null) {
+            stage.setX(savedBounds.getMinX());
+            stage.setY(savedBounds.getMinY());
+            stage.setWidth(savedBounds.getWidth());
+            stage.setHeight(savedBounds.getHeight());
+            savedBounds = null;
+        } else {
+            ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+            Screen screen = screensForRectangle.get(0);
+            Rectangle2D visualBounds = screen.getVisualBounds();
+
+            savedBounds = new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+
+            undecorator.setShadow(false);
+
+            stage.setX(0);
+            stage.setY(0);
+            stage.setWidth(visualBounds.getWidth());
+            stage.setHeight(visualBounds.getHeight());
+        }
+    }
+
+    public static void close(Stage stage) {
+        stage.hide();   // TODO: real close
+    }
+
+    public static void minimize(Stage stage) {
+        stage.setIconified(true);
+    }
+
+    public static void setAsResizable(final Stage stage, final Node node, int PADDING, int SHADOW) {
         RESIZE_PADDING = PADDING;
         SHADOW_WIDTH = SHADOW;
         node.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                dragOffsetX = (stage.getX() + stage.getWidth()) - mouseEvent.getScreenX();
-                dragOffsetY = (stage.getY() + stage.getHeight()) - mouseEvent.getScreenY();
+//                dragOffsetX = (stage.getX() + stage.getWidth()) - mouseEvent.getScreenX();
+//                dragOffsetY = (stage.getY() + stage.getHeight()) - mouseEvent.getScreenY();
 
                 initX = mouseEvent.getScreenX();
                 initY = mouseEvent.getScreenY();
@@ -43,39 +81,47 @@ public class UndecoratorController {
         node.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                double newX = mouseEvent.getScreenX();
-                double newY = mouseEvent.getScreenY();
+                if (savedBounds != null) {
+                    return; // maximized mode does not support drag
+                }
+                newX = mouseEvent.getScreenX();
+                newY = mouseEvent.getScreenY();
                 double deltax = newX - initX;
                 double deltay = newY - initY;
-                initX = newX;
-                initY = newY;
+
                 Cursor cursor = node.getCursor();
                 if (Cursor.E_RESIZE.equals(cursor)) {
-                    stage.setWidth(stage.getWidth() + deltax);
+                    UndecoratorController.setStageWidth(stage, stage.getWidth() + deltax);
                 } else if (Cursor.NE_RESIZE.equals(cursor)) {
-                    stage.setY(stage.getY() + deltay);
-                    stage.setWidth(stage.getWidth() + deltax);
-                    stage.setHeight(stage.getHeight() - deltay);
+                    if (UndecoratorController.setStageHeight(stage, stage.getHeight() - deltay)) {
+                        stage.setY(stage.getY() + deltay);
+                    }
+                    UndecoratorController.setStageWidth(stage, stage.getWidth() + deltax);
                 } else if (Cursor.SE_RESIZE.equals(cursor)) {
-                    stage.setWidth(stage.getWidth() + deltax);
-                    stage.setHeight(stage.getHeight() + deltay);
+                    UndecoratorController.setStageWidth(stage, stage.getWidth() + deltax);
+                    UndecoratorController.setStageHeight(stage, stage.getHeight() + deltay);
                 } else if (Cursor.S_RESIZE.equals(cursor)) {
-                    stage.setHeight(stage.getHeight() + deltay);
+                    UndecoratorController.setStageHeight(stage, stage.getHeight() + deltay);
                 } else if (Cursor.W_RESIZE.equals(cursor)) {
-                    stage.setX(stage.getX() + deltax);
-                    stage.setWidth(stage.getWidth() - deltax);
+                    if (UndecoratorController.setStageWidth(stage, stage.getWidth() - deltax)) {
+                        stage.setX(stage.getX() + deltax);
+                    }
                 } else if (Cursor.SW_RESIZE.equals(cursor)) {
-                    stage.setX(stage.getX() + deltax);
-                    stage.setWidth(stage.getWidth() - deltax);
-                    stage.setHeight(stage.getHeight() + deltay);
+                    if (UndecoratorController.setStageWidth(stage, stage.getWidth() - deltax)) {
+                        stage.setX(stage.getX() + deltax);
+                    }
+                    UndecoratorController.setStageHeight(stage, stage.getHeight() + deltay);
                 } else if (Cursor.NW_RESIZE.equals(cursor)) {
-                    stage.setX(stage.getX() + deltax);
-                    stage.setY(stage.getY() + deltay);
-                    stage.setWidth(stage.getWidth() - deltax);
-                    stage.setHeight(stage.getHeight() - deltay);
+                    if (UndecoratorController.setStageWidth(stage, stage.getWidth() - deltax)) {
+                        stage.setX(stage.getX() + deltax);
+                    }
+                    if (UndecoratorController.setStageHeight(stage, stage.getHeight() - deltay)) {
+                        stage.setY(stage.getY() + deltay);
+                    }
                 } else if (Cursor.N_RESIZE.equals(cursor)) {
-                    stage.setY(stage.getY() + deltay);
-                    stage.setHeight(stage.getHeight() - deltay);
+                    if (UndecoratorController.setStageHeight(stage, stage.getHeight() - deltay)) {
+                        stage.setY(stage.getY() + deltay);
+                    }
                 } else {
                     setCursor(node, Cursor.HAND);
                     stage.setX(stage.getX() + deltax);
@@ -87,6 +133,9 @@ public class UndecoratorController {
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                if (savedBounds != null) {
+                    return; // maximized mode does not support drag
+                }
                 double x = mouseEvent.getX();
                 double y = mouseEvent.getY();
                 Bounds boundsInParent = node.getBoundsInParent();
@@ -118,13 +167,31 @@ public class UndecoratorController {
         });
     }
 
+    static boolean setStageWidth(Stage stage, double width) {
+        if (width >= stage.getMinWidth()) {
+            stage.setWidth(width);
+            initX = newX;
+            return true;
+        }
+        return false;
+    }
+
+    static boolean setStageHeight(Stage stage, double height) {
+        if (height >= stage.getMinHeight()) {
+            stage.setHeight(height);
+            initY = newY;
+            return true;
+        }
+        return false;
+    }
+
     public static void setAsDraggable(final Window stage, final Node node) {
 
         node.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                dragOffsetX = (stage.getX() + stage.getWidth()) - mouseEvent.getScreenX();
-                dragOffsetY = (stage.getY() + stage.getHeight()) - mouseEvent.getScreenY();
+//                dragOffsetX = (stage.getX() + stage.getWidth()) - mouseEvent.getScreenX();
+//                dragOffsetY = (stage.getY() + stage.getHeight()) - mouseEvent.getScreenY();
 
                 initX = mouseEvent.getScreenX();
                 initY = mouseEvent.getScreenY();

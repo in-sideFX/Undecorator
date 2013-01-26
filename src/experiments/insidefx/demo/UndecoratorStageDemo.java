@@ -17,13 +17,13 @@ import javafx.stage.StageStyle;
  * @author in-sideFX
  */
 public class UndecoratorStageDemo extends Application {
-
+    
     @Override
     public void start(final Stage stage) throws Exception {
-
+        
         Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
-        Undecorator undecorator = new Undecorator(stage,root);
-     
+        Undecorator undecorator = new Undecorator(stage, root);
+
         //undecorator.getChildren().add(root);
 
         Scene scene = new Scene(undecorator);
@@ -31,13 +31,17 @@ public class UndecoratorStageDemo extends Application {
         // Transparent scene and stage
         scene.setFill(Color.TRANSPARENT);
         stage.initStyle(StageStyle.TRANSPARENT);
-
+        
+        // Test Minimum size
+        stage.setMinWidth(500);
+        stage.setMinHeight(400);
+        
         stage.setTitle("No title bar");
         stage.setScene(scene);
-
+        
         stage.show();
     }
-
+    
     public static void main(String[] args) {
         launch(args);
     }

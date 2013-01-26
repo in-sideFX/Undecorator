@@ -9,7 +9,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -18,7 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -31,6 +29,7 @@ public class Undecorator extends StackPane {
     Rectangle shadowRectangle;
     BorderPane decorationWrapper;
     static public int SHADOW_WIDTH = 15;
+    static public int SAVED_SHADOW_WIDTH = 15;
     static public int RESIZE_PADDING = 15;
     DropShadow dsFocused;
     DropShadow dsNotFocused;
@@ -40,6 +39,8 @@ public class Undecorator extends StackPane {
 
         loadConfig();
         // The controller
+        new UndecoratorController(this);
+        
         UndecoratorController.setAsDraggable(stage, root);
         // radius, spread, offsets
         dsFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, SHADOW_WIDTH, 0.1, 0, 0);
@@ -52,7 +53,7 @@ public class Undecorator extends StackPane {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("stagedecoration.fxml"));
-            fxmlLoader.setController(new StagedecorationController());
+            fxmlLoader.setController(new StageDecorationController(stage));
             stageDecoration = (Pane) fxmlLoader.load();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
@@ -95,11 +96,7 @@ public class Undecorator extends StackPane {
         stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t1.booleanValue()) {
-                    shadowRectangle.setEffect(dsFocused);
-                } else {
-                    shadowRectangle.setEffect(dsNotFocused);
-                }
+                setShadowFocused(t1.booleanValue());
             }
         });
         /*
@@ -108,25 +105,28 @@ public class Undecorator extends StackPane {
         stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (t1.booleanValue()) {
-                    shadowRectangle.setEffect(null);
-                } else {
-                    shadowRectangle.setEffect(dsFocused);
-                }
+                setShadow(t1.booleanValue());
             }
         });
     }
 
-    void maximize(Stage stage) {
-        ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
-        Screen screen = screensForRectangle.get(0);
-        Rectangle2D visualBounds = screen.getVisualBounds();
-        // Save stage bounds
+    protected void setShadow(boolean b) {
+        if (!b) {
+            shadowRectangle.setEffect(null);
+            SAVED_SHADOW_WIDTH=SHADOW_WIDTH;
+            SHADOW_WIDTH=0;
+        } else {
+            shadowRectangle.setEffect(dsFocused);
+            SHADOW_WIDTH=SAVED_SHADOW_WIDTH;
+        }
+    }
 
-        stage.setX(0);
-        stage.setY(0);
-        stage.setWidth(visualBounds.getWidth());
-        stage.setHeight(visualBounds.getHeight());
+    protected void setShadowFocused(boolean b) {
+        if (b) {
+            shadowRectangle.setEffect(dsFocused);
+        } else {
+            shadowRectangle.setEffect(dsNotFocused);
+        }
     }
 
     @Override
