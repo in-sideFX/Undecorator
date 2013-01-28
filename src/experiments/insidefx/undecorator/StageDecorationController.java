@@ -60,10 +60,10 @@ public class StageDecorationController implements Initializable {
                 Tooltip tooltip = source.getTooltip();
                 if (tooltip.getText().equals("Maximize")){
                     tooltip.setText("Restore");
-                       source.getStyleClass().add(".decoration.restore"); lala
-
+                       source.getStyleClass().add("decoration-button-restore");
                 } else {
                       tooltip.setText("Maximize");
+                       source.getStyleClass().remove("decoration-button-restore");
                 }
             }
         });

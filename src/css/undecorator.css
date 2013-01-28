@@ -36,6 +36,16 @@
     -fx-background-color: null;
     -fx-background-image:url("../img/maximize-hover.png");
 }
+.decoration-button-restore{
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-color: null;
+    -fx-background-image:url("../img/restore.png");
+}
+.decoration-button-restore:hover{
+    -fx-background-color: null;
+    -fx-background-image:url("../img/restore-hover.png");
+}
 /*
 *	Close button
 */
