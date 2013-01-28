@@ -15,10 +15,12 @@
 .decoration-button-minimize{
     -fx-background-radius: 0;
     -fx-border-style: null;
+    -fx-background-color: null;
     -fx-background-image:url("../img/minimize.png");
 }
 
 .decoration-button-minimize:hover{
+    -fx-background-color: null;
     -fx-background-image:url("../img/minimize-hover.png");
 }
 /*
@@ -27,9 +29,11 @@
 .decoration-button-maximize{
     -fx-background-radius: 0;
     -fx-border-style: null;
+    -fx-background-color: null;
     -fx-background-image:url("../img/maximize.png");
 }
 .decoration-button-maximize:hover{
+    -fx-background-color: null;
     -fx-background-image:url("../img/maximize-hover.png");
 }
 /*
@@ -38,9 +42,11 @@
 .decoration-button-close{
     -fx-background-radius: 0;
     -fx-border-style: null;
+    -fx-background-color: null;
     -fx-background-image:url("../img/close.png");
 }
 .decoration-button-close:hover{
+    -fx-background-color: null;
     -fx-background-image:url("../img/close-hover.png");
 }
 
@@ -50,8 +56,6 @@
 .decoration-button-resize{
     -fx-background-radius: 0;
     -fx-border-style: null;
+    -fx-background-color: null;
     -fx-background-image:url("../img/resizeSE.png");
-}
-.decoration-button-resize:hover{
-    -fx-background-image:url("../img/resizeSE-hover.png");
 }

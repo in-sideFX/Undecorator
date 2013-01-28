@@ -1,0 +1,14 @@
+/* 
+    Document   : Undecorator
+    Created on : Jan 15, 2013, 8:42:25 AM
+    Author     : In-SideFX
+    Description:
+        Demo purpose
+*/
+.logo{
+    -fx-image:url("./in-sidefx.png");
+}
+.logo-label{
+    -fx-font-weight:bold;
+    -fx-text-fill: gray;
+}

@@ -15,7 +15,8 @@ import javafx.stage.Window;
 /**
  *
  * @author in-sideFX TODO: Manage minimum size, Multiple screen, Maximization,
- * Inject right click, icons, API + Window Listener, tooltip, no static!, focus on icons
+ * Inject right click, icons, API + Window Listener, tooltip, no static!, focus
+ * on icons
  */
 public class UndecoratorController {
 
@@ -39,6 +40,7 @@ public class UndecoratorController {
             stage.setY(savedBounds.getMinY());
             stage.setWidth(savedBounds.getWidth());
             stage.setHeight(savedBounds.getHeight());
+            undecorator.setShadow(true);
             savedBounds = null;
         } else {
             ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
