@@ -7,7 +7,23 @@
 */
 
 .undecorator-background {
-    -fx-fill: #ffffff;
+    -fx-fill:#ffffff;  
+   /* -fx-fill:  linear-gradient(from 0% 0% to 100% 100%, white 0%, gray 100%);*/
+}
+
+/*
+*	Menu button
+*/
+.decoration-button-menu{
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-color: null;
+    -fx-background-image:url("./back.png");
+}
+
+.decoration-button-menu:hover{
+    -fx-background-color: null;
+    -fx-background-image:url("./back-hover.png");
 }
 /*
 *	Minmize button
@@ -16,12 +32,12 @@
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("../img/minimize.png");
+    -fx-background-image:url("./minimize.png");
 }
 
 .decoration-button-minimize:hover{
     -fx-background-color: null;
-    -fx-background-image:url("../img/minimize-hover.png");
+    -fx-background-image:url("./minimize-hover.png");
 }
 /*
 *	Maximize button
@@ -30,21 +46,21 @@
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("../img/maximize.png");
+    -fx-background-image:url("./maximize.png");
 }
 .decoration-button-maximize:hover{
     -fx-background-color: null;
-    -fx-background-image:url("../img/maximize-hover.png");
+    -fx-background-image:url("./maximize-hover.png");
 }
 .decoration-button-restore{
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("../img/restore.png");
+    -fx-background-image:url("./restore.png");
 }
 .decoration-button-restore:hover{
     -fx-background-color: null;
-    -fx-background-image:url("../img/restore-hover.png");
+    -fx-background-image:url("./restore-hover.png");
 }
 /*
 *	Close button
@@ -53,11 +69,11 @@
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("../img/close.png");
+    -fx-background-image:url("./close.png");
 }
 .decoration-button-close:hover{
     -fx-background-color: null;
-    -fx-background-image:url("../img/close-hover.png");
+    -fx-background-image:url("./close-hover.png");
 }
 
 /*
@@ -67,5 +83,5 @@
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("../img/resizeSE.png");
+    -fx-background-image:url("./resizeSE.png");
 }

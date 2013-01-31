@@ -12,10 +12,10 @@
 
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml">
   <children>
-    <AnchorPane prefHeight="37.0" prefWidth="640.0">
+    <AnchorPane id="draggableNode" prefHeight="37.0" prefWidth="640.0">
       <children>
-        <Label layoutY="5.0" styleClass="logo-label" text="in-sideFX" AnchorPane.rightAnchor="187.0" />
-        <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" styleClass="logo" AnchorPane.rightAnchor="146.0" AnchorPane.topAnchor="0.0" />
+        <Label styleClass="logo-label" text="in-sideFX" AnchorPane.rightAnchor="187.0" AnchorPane.topAnchor="-5.0" />
+        <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" styleClass="logo" AnchorPane.rightAnchor="146.0" AnchorPane.topAnchor="-15.0" />
       </children>
     </AnchorPane>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
@@ -46,7 +46,7 @@
             </AnchorPane>
           </items>
         </SplitPane>
-        <TextArea prefHeight="58.0" prefWidth="624.0" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0">
+        <TextArea id="" prefHeight="58.0" prefWidth="624.0" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0">
           <effect>
             <DropShadow offsetX="2.0" offsetY="2.0" />
           </effect>
@@ -55,6 +55,6 @@
     </AnchorPane>
   </children>
   <stylesheets>
-    <URL value="@../../../demoapp/demoapp.css" />
+    <URL value="@demoapp.css" />
   </stylesheets>
 </VBox>

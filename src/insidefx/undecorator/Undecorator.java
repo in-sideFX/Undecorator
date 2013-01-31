@@ -1,4 +1,4 @@
-package experiments.insidefx.undecorator;
+package insidefx.undecorator;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -18,6 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  *
@@ -34,26 +35,27 @@ public class Undecorator extends StackPane {
     DropShadow dsFocused;
     DropShadow dsNotFocused;
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
+    UndecoratorController undecoratorController;
+    Stage stage;
 
     public Undecorator(Stage stage, final Node root) {
+        this.stage = stage;
 
         loadConfig();
         // The controller
-        new UndecoratorController(this);
-        
-        UndecoratorController.setAsDraggable(stage, root);
+        undecoratorController = new UndecoratorController(this);
+
+        undecoratorController.setAsStageDraggable(stage, root);
         // radius, spread, offsets
         dsFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, SHADOW_WIDTH, 0.1, 0, 0);
         dsNotFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.DARKGREY, SHADOW_WIDTH, 0, 0, 0);
 
-        getStylesheets().add("/css/undecorator.css");
-
         shadowRectangle = new Rectangle();
-        UndecoratorController.setAsResizable(stage, shadowRectangle, RESIZE_PADDING, SHADOW_WIDTH);
+        undecoratorController.setStageResizableWith(stage, shadowRectangle, RESIZE_PADDING, SHADOW_WIDTH);
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("stagedecoration.fxml"));
-            fxmlLoader.setController(new StageDecorationController(stage));
+            fxmlLoader.setController(new StageDecorationController(this));
             stageDecoration = (Pane) fxmlLoader.load();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
@@ -88,7 +90,7 @@ public class Undecorator extends StackPane {
 
         super.getChildren().addAll(shadowRectangle, root, decorationWrapper);
 
-        // UndecoratorController.setAsDraggable(stage, shadowRectangle);
+        // UndecoratorController.setAsStageDraggable(stage, shadowRectangle);
 
         /*
          * Focused stage
@@ -109,15 +111,22 @@ public class Undecorator extends StackPane {
             }
         });
     }
-
+    /**
+     * Bridge to controller to enable this node to drag the stage
+     * @param stage
+     * @param node 
+     */
+   public void setAsStageDraggable(Window stage, Node node) {
+       undecoratorController.setAsStageDraggable(stage, node);
+   }
     protected void setShadow(boolean b) {
         if (!b) {
             shadowRectangle.setEffect(null);
-            SAVED_SHADOW_WIDTH=SHADOW_WIDTH;
-            SHADOW_WIDTH=0;
+            SAVED_SHADOW_WIDTH = SHADOW_WIDTH;
+            SHADOW_WIDTH = 0;
         } else {
             shadowRectangle.setEffect(dsFocused);
-            SHADOW_WIDTH=SAVED_SHADOW_WIDTH;
+            SHADOW_WIDTH = SAVED_SHADOW_WIDTH;
         }
     }
 
@@ -153,11 +162,19 @@ public class Undecorator extends StackPane {
         }
     }
 
+    public UndecoratorController getController() {
+        return undecoratorController;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
     static void loadConfig() {
         Properties prop = new Properties();
 
         try {
-            prop.load(Undecorator.class.getClassLoader().getResourceAsStream("undecorator.properties"));
+            prop.load(Undecorator.class.getClassLoader().getResourceAsStream("skin/undecorator.properties"));
             RESIZE_PADDING = Integer.parseInt(prop.getProperty("window-resize-padding"));
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error while loading confguration flie", ex);
