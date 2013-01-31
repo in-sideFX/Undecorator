@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -21,7 +22,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
- *
+ * The Stage Decorator TODO: API, utility style, win7 window behavior on
+ * edge,Themes
  */
 public class Undecorator extends StackPane {
 
@@ -37,11 +39,43 @@ public class Undecorator extends StackPane {
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     UndecoratorController undecoratorController;
     Stage stage;
+    SimpleBooleanProperty maximizeProperty;
+    SimpleBooleanProperty minimizeProperty;
+    SimpleBooleanProperty closeProperty;
 
     public Undecorator(Stage stage, final Node root) {
-        this.stage = stage;
+        this(stage, root, "stagedecoration.fxml");
+    }
 
+    public Undecorator(Stage stage, final Node root, String stageDecorationFxml) {
+        this.stage = stage;
+        
         loadConfig();
+
+        // Properties 
+        maximizeProperty = new SimpleBooleanProperty(false);
+        maximizeProperty.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                getController().maximizeOrRestore();
+            }
+        });
+        minimizeProperty = new SimpleBooleanProperty(false);
+        minimizeProperty.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                getController().minimize();
+            }
+        });
+
+        closeProperty = new SimpleBooleanProperty(false);
+        closeProperty.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                getController().close();
+            }
+        });
+        
         // The controller
         undecoratorController = new UndecoratorController(this);
 
@@ -53,8 +87,9 @@ public class Undecorator extends StackPane {
         shadowRectangle = new Rectangle();
         undecoratorController.setStageResizableWith(stage, shadowRectangle, RESIZE_PADDING, SHADOW_WIDTH);
 
+        // UI part
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("stagedecoration.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(stageDecorationFxml));
             fxmlLoader.setController(new StageDecorationController(this));
             stageDecoration = (Pane) fxmlLoader.load();
         } catch (Exception ex) {
@@ -110,15 +145,32 @@ public class Undecorator extends StackPane {
                 setShadow(t1.booleanValue());
             }
         });
+
+
     }
+
+    public SimpleBooleanProperty maximizeProperty() {
+        return maximizeProperty;
+    }
+
+    public SimpleBooleanProperty minimizeProperty() {
+        return minimizeProperty;
+    }
+
+    public SimpleBooleanProperty closeProperty() {
+        return closeProperty;
+    }
+
     /**
      * Bridge to controller to enable this node to drag the stage
+     *
      * @param stage
-     * @param node 
+     * @param node
      */
-   public void setAsStageDraggable(Window stage, Node node) {
-       undecoratorController.setAsStageDraggable(stage, node);
-   }
+    public void setAsStageDraggable(Window stage, Node node) {
+        undecoratorController.setAsStageDraggable(stage, node);
+    }
+
     protected void setShadow(boolean b) {
         if (!b) {
             shadowRectangle.setEffect(null);

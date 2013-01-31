@@ -14,13 +14,12 @@ import javafx.stage.Window;
 
 /**
  *
- * @author in-sideFX TODO: double click,
- * non rectangular UI,  Inject right click, API + Window Listener, tooltip, utility style, set node as draggable
+ * @author in-sideFX
  */
 public class UndecoratorController {
 
-    private static double initX;
-    private static double initY;
+    private static double initX = -1;
+    private static double initY = -1;
     private static double newX;
     private static double newY;
     private static int RESIZE_PADDING;
@@ -33,7 +32,7 @@ public class UndecoratorController {
         undecorator = ud;
     }
 
-    public void maximize() {
+    protected void maximizeOrRestore() {
         Stage stage = undecorator.getStage();
 
         if (savedBounds != null) {
@@ -73,17 +72,23 @@ public class UndecoratorController {
 
         RESIZE_PADDING = PADDING;
         SHADOW_WIDTH = SHADOW;
+
         node.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                initX = mouseEvent.getScreenX();
-                initY = mouseEvent.getScreenY();
-                mouseEvent.consume();
+                if (mouseEvent.isPrimaryButtonDown()) {
+                    initX = mouseEvent.getScreenX();
+                    initY = mouseEvent.getScreenY();
+                    mouseEvent.consume();
+                }
             }
         });
         node.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                if (!mouseEvent.isPrimaryButtonDown()) {
+                    return;
+                }
                 if (savedBounds != null) {
                     return; // maximized mode does not support drag
                 }
@@ -97,7 +102,7 @@ public class UndecoratorController {
                     setStageWidth(stage, stage.getWidth() + deltax);
                 } else if (Cursor.NE_RESIZE.equals(cursor)) {
                     if (setStageHeight(stage, stage.getHeight() - deltay)) {
-                        stage.setY(stage.getY() + deltay);
+                        setStageY(stage,stage.getY() + deltay);
                     }
                     setStageWidth(stage, stage.getWidth() + deltax);
                 } else if (Cursor.SE_RESIZE.equals(cursor)) {
@@ -119,16 +124,16 @@ public class UndecoratorController {
                         stage.setX(stage.getX() + deltax);
                     }
                     if (setStageHeight(stage, stage.getHeight() - deltay)) {
-                        stage.setY(stage.getY() + deltay);
+                        setStageY(stage,stage.getY() + deltay);
                     }
                 } else if (Cursor.N_RESIZE.equals(cursor)) {
                     if (setStageHeight(stage, stage.getHeight() - deltay)) {
-                        stage.setY(stage.getY() + deltay);
+                        setStageY(stage,stage.getY() + deltay);
                     }
                 } else {
                     setCursor(node, Cursor.HAND);
                     stage.setX(stage.getX() + deltax);
-                    stage.setY(stage.getY() + deltay);
+                    setStageY(stage,stage.getY() + deltay);
                 }
                 mouseEvent.consume();
             }
@@ -169,7 +174,19 @@ public class UndecoratorController {
             }
         });
     }
-
+    /**
+     * Under Windows, the undecorator Stage could be been dragged below the Task bar. No way to catch it again...
+     * 
+     * @param y 
+     */
+    void setStageY(Stage stage, double y){
+         ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+         Screen screen = screensForRectangle.get(0);
+         Rectangle2D visualBounds = screen.getVisualBounds();
+         if( y < visualBounds.getHeight()-30) {
+            stage.setY(y);
+        }
+    }
     boolean setStageWidth(Stage stage, double width) {
         if (width >= stage.getMinWidth()) {
             stage.setWidth(width);
@@ -188,28 +205,52 @@ public class UndecoratorController {
         return false;
     }
 
+    /**
+     * Allow this node to drag the Stage
+     *
+     * @param stage
+     * @param node
+     */
     public void setAsStageDraggable(final Window stage, final Node node) {
 
+        node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            // Maximize on double click
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() > 1) {
+                    maximizeOrRestore();
+                    mouseEvent.consume();
+                }
+            }
+        });
         node.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-//                dragOffsetX = (stage.getX() + stage.getWidth()) - mouseEvent.getScreenX();
-//                dragOffsetY = (stage.getY() + stage.getHeight()) - mouseEvent.getScreenY();
-
-                initX = mouseEvent.getScreenX();
-                initY = mouseEvent.getScreenY();
-                mouseEvent.consume();
+                if (mouseEvent.isPrimaryButtonDown()) {
+                    initX = mouseEvent.getScreenX();
+                    initY = mouseEvent.getScreenY();
+                    mouseEvent.consume();
+                } else {
+                    initX = -1;
+                    initY = -1;
+                }
             }
         });
         node.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 setCursor(node, Cursor.DEFAULT);
+                initX = -1;
+                initY = -1;
             }
         });
         node.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                if (!mouseEvent.isPrimaryButtonDown() || initX == -1) {
+                    return;
+                }
+
                 double newX = mouseEvent.getScreenX();
                 double newY = mouseEvent.getScreenY();
                 double deltax = newX - initX;
