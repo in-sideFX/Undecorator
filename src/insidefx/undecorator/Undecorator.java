@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
 
 /**
@@ -25,18 +26,18 @@ import javafx.stage.Stage;
  */
 public class Undecorator extends StackPane {
 
+    public static final Logger LOGGER = Logger.getLogger("Undecorator");
     Node clientArea;
     Pane stageDecoration = null;
     Rectangle shadowRectangle;
-//    BorderPane decorationWrapper;
     static public int SHADOW_WIDTH = 15;
     static public int SAVED_SHADOW_WIDTH = 15;
-    static public int RESIZE_PADDING = 15;
+    static public int RESIZE_PADDING = 7;
     DropShadow dsFocused;
     DropShadow dsNotFocused;
-    public static final Logger LOGGER = Logger.getLogger("Undecorator");
     UndecoratorController undecoratorController;
     Stage stage;
+    Rectangle resizeRect;
     SimpleBooleanProperty maximizeProperty;
     SimpleBooleanProperty minimizeProperty;
     SimpleBooleanProperty closeProperty;
@@ -47,7 +48,7 @@ public class Undecorator extends StackPane {
 
     public Undecorator(Stage stage, final Node root, String stageDecorationFxml) {
         this.stage = stage;
-        
+
         loadConfig();
 
         // Properties 
@@ -73,7 +74,7 @@ public class Undecorator extends StackPane {
                 getController().close();
             }
         });
-        
+
         // The controller
         undecoratorController = new UndecoratorController(this);
 
@@ -83,7 +84,6 @@ public class Undecorator extends StackPane {
         dsNotFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.DARKGREY, SHADOW_WIDTH, 0, 0, 0);
 
         shadowRectangle = new Rectangle();
-        undecoratorController.setStageResizableWith(stage, shadowRectangle, RESIZE_PADDING, SHADOW_WIDTH);
 
         // UI part
         try {
@@ -94,10 +94,19 @@ public class Undecorator extends StackPane {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
         }
 
-        
+        /*
+         * Resize rectangle
+         */
+        resizeRect = new Rectangle();
+        resizeRect.setFill(null);
+        resizeRect.setStrokeWidth(RESIZE_PADDING);
+        resizeRect.setStrokeType(StrokeType.INSIDE);
+        resizeRect.setStroke(Color.TRANSPARENT);
+        undecoratorController.setStageResizableWith(stage, resizeRect, RESIZE_PADDING, SHADOW_WIDTH);
+
         // TODO: how to programmatically get css values? wait for JavaFX custom CSS
         shadowRectangle.getStyleClass().add("undecorator-background");
-        super.getChildren().addAll(shadowRectangle, root, stageDecoration);
+        super.getChildren().addAll(shadowRectangle, root, stageDecoration, resizeRect);
 
         /*
          * Focused stage
@@ -178,6 +187,11 @@ public class Undecorator extends StackPane {
                 stageDecoration.resize(w - SHADOW_WIDTH * 2, h - SHADOW_WIDTH * 2);
                 stageDecoration.setLayoutX(SHADOW_WIDTH);
                 stageDecoration.setLayoutY(SHADOW_WIDTH);
+            } else if (node == resizeRect) {
+                resizeRect.setWidth(w - SHADOW_WIDTH * 2);
+                resizeRect.setHeight(h - SHADOW_WIDTH * 2);
+                resizeRect.setLayoutX(SHADOW_WIDTH);
+                resizeRect.setLayoutY(SHADOW_WIDTH);
             } else {
                 node.resize(w - SHADOW_WIDTH * 2 - RESIZE_PADDING * 2, h - SHADOW_WIDTH * 2 - RESIZE_PADDING * 2);
                 node.setLayoutX(SHADOW_WIDTH + RESIZE_PADDING);
@@ -199,6 +213,7 @@ public class Undecorator extends StackPane {
 
         try {
             prop.load(Undecorator.class.getClassLoader().getResourceAsStream("skin/undecorator.properties"));
+            SHADOW_WIDTH = Integer.parseInt(prop.getProperty("window-shadow-width"));
             RESIZE_PADDING = Integer.parseInt(prop.getProperty("window-resize-padding"));
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error while loading confguration flie", ex);

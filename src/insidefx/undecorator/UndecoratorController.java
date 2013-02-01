@@ -24,7 +24,6 @@ public class UndecoratorController {
     private static double newY;
     private static int RESIZE_PADDING;
     private static int SHADOW_WIDTH;
-//    private static double dragOffsetX, dragOffsetY;
     Undecorator undecorator;
     BoundingBox savedBounds;
 
@@ -34,7 +33,7 @@ public class UndecoratorController {
 
     /*
      * Actions
-    */
+     */
     protected void maximizeOrRestore() {
         Stage stage = undecorator.getStage();
 
@@ -73,15 +72,27 @@ public class UndecoratorController {
 
     /**
      * Stage resize management
+     *
      * @param stage
      * @param node
      * @param PADDING
-     * @param SHADOW 
+     * @param SHADOW
      */
     public void setStageResizableWith(final Stage stage, final Node node, int PADDING, int SHADOW) {
 
         RESIZE_PADDING = PADDING;
         SHADOW_WIDTH = SHADOW;
+        node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            // Maximize on double click
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() > 1)// && Cursor.N_RESIZE.equals(node.getCursor()))
+                {
+                    maximizeOrRestore();
+                    mouseEvent.consume();
+                }
+            }
+        });
 
         node.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -96,7 +107,7 @@ public class UndecoratorController {
         node.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (!mouseEvent.isPrimaryButtonDown() || (initX==-1&&initY==-1)) {
+                if (!mouseEvent.isPrimaryButtonDown() || (initX == -1 && initY == -1)) {
                     return;
                 }
                 if (savedBounds != null) {
@@ -156,6 +167,7 @@ public class UndecoratorController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (savedBounds != null) {
+                    setCursor(node, Cursor.DEFAULT);
                     return; // maximized mode does not support drag
                 }
                 double x = mouseEvent.getX();
