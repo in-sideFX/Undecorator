@@ -13,13 +13,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * The Stage Decorator TODO: API, utility style, win7 window behavior on
@@ -30,7 +28,7 @@ public class Undecorator extends StackPane {
     Node clientArea;
     Pane stageDecoration = null;
     Rectangle shadowRectangle;
-    BorderPane decorationWrapper;
+//    BorderPane decorationWrapper;
     static public int SHADOW_WIDTH = 15;
     static public int SAVED_SHADOW_WIDTH = 15;
     static public int RESIZE_PADDING = 15;
@@ -95,37 +93,11 @@ public class Undecorator extends StackPane {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
         }
-        /*
-         * Create this wrapper to make stageDecoration pane transparent for mouse event
-         */
-        decorationWrapper = new BorderPane() {
-            /**
-             * Ideally must not override deprecated method, but at this jfx
-             * stage, there is no good API to pick component under mouse.
-             */
-            @Override
-            protected boolean containsBounds(double d, double d1) {
-                ObservableList<Node> children = stageDecoration.getChildren();
-                for (Node node : children) {
-                    if (node.isMouseTransparent()) {
-                        continue;
-                    }
-                    Bounds boundsInParent = node.getBoundsInParent();
-                    if (boundsInParent.contains(d, d1)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-        decorationWrapper.setCenter(stageDecoration);
 
+        
         // TODO: how to programmatically get css values? wait for JavaFX custom CSS
         shadowRectangle.getStyleClass().add("undecorator-background");
-
-        super.getChildren().addAll(shadowRectangle, root, decorationWrapper);
-
-        // UndecoratorController.setAsStageDraggable(stage, shadowRectangle);
+        super.getChildren().addAll(shadowRectangle, root, stageDecoration);
 
         /*
          * Focused stage
@@ -167,7 +139,7 @@ public class Undecorator extends StackPane {
      * @param stage
      * @param node
      */
-    public void setAsStageDraggable(Window stage, Node node) {
+    public void setAsStageDraggable(Stage stage, Node node) {
         undecoratorController.setAsStageDraggable(stage, node);
     }
 
@@ -202,10 +174,10 @@ public class Undecorator extends StackPane {
                 shadowRectangle.setHeight(h - SHADOW_WIDTH * 2);
                 shadowRectangle.setX(SHADOW_WIDTH);
                 shadowRectangle.setY(SHADOW_WIDTH);
-            } else if (node == decorationWrapper) {
-                decorationWrapper.resize(w - SHADOW_WIDTH * 2, h - SHADOW_WIDTH * 2);
-                decorationWrapper.setLayoutX(SHADOW_WIDTH);
-                decorationWrapper.setLayoutY(SHADOW_WIDTH);
+            } else if (node == stageDecoration) {
+                stageDecoration.resize(w - SHADOW_WIDTH * 2, h - SHADOW_WIDTH * 2);
+                stageDecoration.setLayoutX(SHADOW_WIDTH);
+                stageDecoration.setLayoutY(SHADOW_WIDTH);
             } else {
                 node.resize(w - SHADOW_WIDTH * 2 - RESIZE_PADDING * 2, h - SHADOW_WIDTH * 2 - RESIZE_PADDING * 2);
                 node.setLayoutX(SHADOW_WIDTH + RESIZE_PADDING);

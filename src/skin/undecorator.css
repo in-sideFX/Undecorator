@@ -25,12 +25,12 @@
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("./back.png");
+    -fx-background-image:url("./menu.png");
 }
 
 .decoration-button-menu:hover{
     -fx-background-color: null;
-    -fx-background-image:url("./back-hover.png");
+    -fx-background-image:url("./menu-hover.png");
 }
 /*
 *	Minmize button

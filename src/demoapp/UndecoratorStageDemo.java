@@ -1,5 +1,7 @@
 /**
  * Demo purpose
+ * In-SideFX (Un)decorator for JavaFX stage
+ * License: You can use this code to any kind of purpose, commercial or not.
  */
 package demoapp;
 
@@ -24,13 +26,13 @@ public class UndecoratorStageDemo extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         Undecorator undecorator = new Undecorator(stage, root);
+        // Customize it by CSS isf needed:
         undecorator.getStylesheets().add("skin/undecorator.css");
         
         // Optional: Enable this node to drag the stage
         // By default the root argument of Undecorator is set as draggable
         Node node = root.lookup("#draggableNode");
         undecorator.setAsStageDraggable(stage, node);
-
         
         Scene scene = new Scene(undecorator);
 
@@ -38,7 +40,7 @@ public class UndecoratorStageDemo extends Application {
         scene.setFill(Color.TRANSPARENT);
         stage.initStyle(StageStyle.TRANSPARENT);
 
-        // Test Minimum size
+        // Set minimum size
         stage.setMinWidth(500);
         stage.setMinHeight(400);
 
