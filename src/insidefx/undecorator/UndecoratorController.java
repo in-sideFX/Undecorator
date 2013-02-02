@@ -26,7 +26,15 @@ public class UndecoratorController {
     private static int SHADOW_WIDTH;
     Undecorator undecorator;
     BoundingBox savedBounds;
-
+    static boolean  isMacOS=false;
+    
+    {
+         String os = System.getProperty("os.name").toLowerCase();
+         if (os.indexOf("mac") != -1){
+             isMacOS=true;
+         }
+    }
+        
     public UndecoratorController(Undecorator ud) {
         undecorator = ud;
     }
@@ -53,10 +61,18 @@ public class UndecoratorController {
 
             undecorator.setShadow(false);
 
-            stage.setX(0);
-            stage.setY(0);
-            stage.setWidth(visualBounds.getWidth());
-            stage.setHeight(visualBounds.getHeight());
+            String os = System.getProperty("os.name").toLowerCase();
+            if (isMacOS) {
+                stage.setX(0);
+                stage.setY(16);
+                stage.setWidth(visualBounds.getWidth());
+                stage.setHeight(visualBounds.getHeight()-16);
+            } else {
+                stage.setX(0);
+                stage.setY(0);
+                stage.setWidth(visualBounds.getWidth());
+                stage.setHeight(visualBounds.getHeight());
+            }
         }
     }
 
