@@ -66,7 +66,7 @@ public class UndecoratorController {
                 stage.setX(0);
                 stage.setY(22);
                 stage.setWidth(visualBounds.getWidth());
-                stage.setHeight(visualBounds.getHeight()-22);
+                stage.setHeight(visualBounds.getHeight());
             } else {
                 stage.setX(0);
                 stage.setY(0);
