@@ -88,7 +88,7 @@ public class UndecoratorController {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() > 1)// && Cursor.N_RESIZE.equals(node.getCursor()))
                 {
-                    maximizeOrRestore();
+                    undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
                     mouseEvent.consume();
                 }
             }
@@ -253,7 +253,7 @@ public class UndecoratorController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() > 1) {
-                    maximizeOrRestore();
+                    undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
                     mouseEvent.consume();
                 }
             }
