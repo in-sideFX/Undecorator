@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 
 /**
  * The Stage Decorator TODO: API, utility style, win7 window behavior on
- * edge,Themes
+ * edge,Themes, title bar
  */
 public class Undecorator extends StackPane {
 

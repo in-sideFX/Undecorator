@@ -61,15 +61,14 @@ public class UndecoratorController {
 
             undecorator.setShadow(false);
 
-            String os = System.getProperty("os.name").toLowerCase();
             if (isMacOS) {
-                stage.setX(0);
-                stage.setY(22);
+                stage.setX(visualBounds.getMaxX());
+                stage.setY(visualBounds.getMaxY()+22);
                 stage.setWidth(visualBounds.getWidth());
                 stage.setHeight(visualBounds.getHeight());
             } else {
-                stage.setX(0);
-                stage.setY(0);
+                stage.setX(visualBounds.getMaxX());
+                stage.setY(visualBounds.getMaxY());
                 stage.setWidth(visualBounds.getWidth());
                 stage.setHeight(visualBounds.getHeight());
             }

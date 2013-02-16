@@ -26,7 +26,7 @@ public class UndecoratorStageDemo extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         Undecorator undecorator = new Undecorator(stage, root);
-        // Customize it by CSS isf needed:
+        // Customize it by CSS if needed:
         undecorator.getStylesheets().add("skin/undecorator.css");
         
         // Optional: Enable this node to drag the stage
