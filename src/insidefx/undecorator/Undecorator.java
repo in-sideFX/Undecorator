@@ -1,3 +1,29 @@
+/*
+ * Copyright (c) 2013, Arnaud Nouard
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the In-SideFX nor the
+ names of its contributors may be used to endorse or promote products
+ derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package insidefx.undecorator;
 
 import java.io.IOException;
@@ -8,11 +34,21 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -26,6 +62,20 @@ import javafx.stage.Stage;
  */
 public class Undecorator extends StackPane {
 
+    @FXML
+    private Button menu;
+    @FXML
+    private Button close;
+    @FXML
+    private Button maximize;
+    @FXML
+    private Button minimize;
+    @FXML
+    private Button resize;
+    MenuItem maximizeMenuItem;
+    
+    
+    
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     Node clientArea;
     Pane stageDecoration = null;
@@ -79,20 +129,23 @@ public class Undecorator extends StackPane {
         undecoratorController = new UndecoratorController(this);
 
         undecoratorController.setAsStageDraggable(stage, root);
+
         // radius, spread, offsets
         dsFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, SHADOW_WIDTH, 0.1, 0, 0);
         dsNotFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.DARKGREY, SHADOW_WIDTH, 0, 0, 0);
 
         shadowRectangle = new Rectangle();
 
-        // UI part
+        // UI part of the decoration
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(stageDecorationFxml));
-            fxmlLoader.setController(new StageDecorationController(this));
+//            fxmlLoader.setController(new StageDecorationController(this));
+            fxmlLoader.setController(this);
             stageDecoration = (Pane) fxmlLoader.load();
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
         }
+        initDecoration();
 
         /*
          * Resize rectangle
@@ -128,6 +181,88 @@ public class Undecorator extends StackPane {
         });
 
 
+    }
+
+    public void initDecoration() {
+
+        // Menu
+        final ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem item1 = new MenuItem("Minimize");
+        item1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                minimizeProperty().set(!minimizeProperty().get());
+            }
+        });
+        maximizeMenuItem = new MenuItem("Maximize");
+        maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                maximizeProperty().set(!maximizeProperty().get());
+                contextMenu.hide(); // Stay stuck on screen
+            }
+        });
+        MenuItem item3 = new MenuItem("Close");
+        item3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                closeProperty().set(!closeProperty().get());
+            }
+        });
+        contextMenu.getItems().addAll(item1, maximizeMenuItem, new SeparatorMenuItem(), item3);
+        // menu.setContextMenu(contextMenu);
+        menu.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                contextMenu.show(menu, Side.BOTTOM, 0, 0);
+            }
+        });
+
+        // Close button
+        close.setTooltip(new Tooltip("Close"));
+        close.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                closeProperty().set(!closeProperty().get());
+            }
+        });
+
+        // Maximize button
+        // If changed via contextual menu
+        maximizeProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                Tooltip tooltip = maximize.getTooltip();
+                if (tooltip.getText().equals("Maximize")) {
+                    tooltip.setText("Restore");
+                    maximizeMenuItem.setText("Restore");
+                    maximize.getStyleClass().add("decoration-button-restore");
+                } else {
+                    tooltip.setText("Maximize");
+                    maximizeMenuItem.setText("Maximize");
+                    maximize.getStyleClass().remove("decoration-button-restore");
+                }
+            }
+        });
+
+        maximize.setTooltip(new Tooltip("Maximize"));
+        maximize.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                maximizeProperty().set(!maximizeProperty().get());
+            }
+        });
+
+
+        // Minimize button
+        minimize.setTooltip(new Tooltip("Minimize"));
+        minimize.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                minimizeProperty().set(!minimizeProperty().get());
+            }
+        });
     }
 
     public SimpleBooleanProperty maximizeProperty() {

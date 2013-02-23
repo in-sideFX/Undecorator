@@ -218,7 +218,7 @@ public class UndecoratorController {
 
     /**
      * Under Windows, the undecorator Stage could be been dragged below the Task
-     * bar. No way to catch it again... TODO: Optimize...
+     * bar and then no way to grab it again... TODO: Optimize...
      *
      * @param y
      */

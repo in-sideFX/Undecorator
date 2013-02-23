@@ -13,9 +13,9 @@
 
 .undecorator-background {
     -fx-fill:#ffffff;
-   /* -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, #eeeeee88, #55555588 75%, dimgray);
-   -fx-arc-width:25;
-   -fx-arc-height:25;*/
+    /* -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, #eeeeee88, #55555588 75%, dimgray);
+    -fx-arc-width:25;
+    -fx-arc-height:25;*/
 }
 
 /*
