@@ -30,6 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -72,5 +73,11 @@ public class UndecoratorScene extends Scene {
 
     public void setAsStageDraggable(Stage stage, Node node) {
         undecorator.setAsStageDraggable(stage, node);
+    }
+    public void setBackgroundStyle(String style){
+        undecorator.getBackground().setStyle(style);
+    }
+    public void setBackgroundPaint(Paint paint){
+        undecorator.getBackground().setFill(paint);
     }
 }

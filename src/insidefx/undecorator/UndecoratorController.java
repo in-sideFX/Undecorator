@@ -294,7 +294,9 @@ public class UndecoratorController {
                 if (!mouseEvent.isPrimaryButtonDown() || initX == -1) {
                     return;
                 }
-
+                if (savedBounds != null) {
+                    return; // maximized mode does not support drag
+                }
                 double newX = mouseEvent.getScreenX();
                 double newY = mouseEvent.getScreenY();
                 double deltax = newX - initX;
@@ -305,7 +307,7 @@ public class UndecoratorController {
                 stage.setX(stage.getX() + deltax);
                 setStageY(stage, stage.getY() + deltay);
 
-                testEdges(stage);
+                testEdges(stage, mouseEvent);
                 mouseEvent.consume();
             }
         });
@@ -328,11 +330,20 @@ public class UndecoratorController {
     /**
      * Simulate Windows behavior on screen's edges
      */
-    void testEdges(Stage stage) {
-      /*  ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+    void testEdges(Stage stage, MouseEvent mouseEvent) {
+        /*
+        ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
         Screen screen = screensForRectangle.get(0);
         Rectangle2D visualBounds = screen.getVisualBounds();
+        if (mouseEvent.getScreenX() == visualBounds.getMinX()) {
+            System.err.println("Dock Left");
+        } else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
+            System.err.println("Dock Right");
+        } else if (mouseEvent.getScreenY() == visualBounds.getMinY()) {
+            undecorator.maximizeProperty.set(true);
+        }
 */
+
     }
 
     public boolean isRightEdge(double x, double y, Bounds boundsInParent) {

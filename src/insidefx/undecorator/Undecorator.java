@@ -179,10 +179,10 @@ public class Undecorator extends StackPane {
                 setShadow(t1.booleanValue());
             }
         });
-
-
     }
-
+    public Rectangle getBackground(){
+        return shadowRectangle;
+    }
     public void initDecoration() {
 
         // Menu
