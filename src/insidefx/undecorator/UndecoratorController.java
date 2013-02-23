@@ -26,15 +26,15 @@ public class UndecoratorController {
     private static int SHADOW_WIDTH;
     Undecorator undecorator;
     BoundingBox savedBounds;
-    static boolean  isMacOS=false;
-    
+    static boolean isMacOS = false;
+
     {
-         String os = System.getProperty("os.name").toLowerCase();
-         if (os.indexOf("mac") != -1){
-             isMacOS=true;
-         }
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("mac") != -1) {
+            isMacOS = true;
+        }
     }
-        
+
     public UndecoratorController(Undecorator ud) {
         undecorator = ud;
     }
@@ -61,17 +61,11 @@ public class UndecoratorController {
 
             undecorator.setShadow(false);
 
-            if (isMacOS) {
-                stage.setX(visualBounds.getMinX());
-                stage.setY(visualBounds.getMinY()+22);
-                stage.setWidth(visualBounds.getWidth());
-                stage.setHeight(visualBounds.getHeight());
-            } else {
-                stage.setX(visualBounds.getMinX());
-                stage.setY(visualBounds.getMinY());
-                stage.setWidth(visualBounds.getWidth());
-                stage.setHeight(visualBounds.getHeight());
-            }
+            stage.setX(visualBounds.getMinX());
+            stage.setY(visualBounds.getMinY());
+            stage.setWidth(visualBounds.getWidth());
+            stage.setHeight(visualBounds.getHeight());
+
         }
     }
 
@@ -310,6 +304,8 @@ public class UndecoratorController {
                 setCursor(node, Cursor.HAND);
                 stage.setX(stage.getX() + deltax);
                 setStageY(stage, stage.getY() + deltay);
+
+                testEdges(stage);
                 mouseEvent.consume();
             }
         });
@@ -326,6 +322,17 @@ public class UndecoratorController {
                 //setCursor(node, Cursor.DEFAULT);
             }
         });
+
+    }
+
+    /**
+     * Simulate Windows behavior on screen's edges
+     */
+    void testEdges(Stage stage) {
+      /*  ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+        Screen screen = screensForRectangle.get(0);
+        Rectangle2D visualBounds = screen.getVisualBounds();
+*/
     }
 
     public boolean isRightEdge(double x, double y, Bounds boundsInParent) {
