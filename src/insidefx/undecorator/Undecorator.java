@@ -393,7 +393,6 @@ public class Undecorator extends StackPane {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error while loading confguration flie", ex);
         }
-        
         LOC = ResourceBundle.getBundle("insidefx/undecorator/resources/localization", Locale.getDefault());
         
     }
