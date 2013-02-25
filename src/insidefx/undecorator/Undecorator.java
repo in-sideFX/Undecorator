@@ -73,9 +73,6 @@ public class Undecorator extends StackPane {
     @FXML
     private Button resize;
     MenuItem maximizeMenuItem;
-    
-    
-    
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     Node clientArea;
     Pane stageDecoration = null;
@@ -180,37 +177,45 @@ public class Undecorator extends StackPane {
             }
         });
     }
-    public Rectangle getBackground(){
+
+    public Rectangle getBackground() {
         return shadowRectangle;
     }
-    public void initDecoration() {
 
+    public void initDecoration() {
+        MenuItem minimizeMenuItem=null;
         // Menu
         final ContextMenu contextMenu = new ContextMenu();
-
-        MenuItem item1 = new MenuItem("Minimize");
-        item1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                minimizeProperty().set(!minimizeProperty().get());
-            }
-        });
-        maximizeMenuItem = new MenuItem("Maximize");
-        maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                maximizeProperty().set(!maximizeProperty().get());
-                contextMenu.hide(); // Stay stuck on screen
-            }
-        });
-        MenuItem item3 = new MenuItem("Close");
-        item3.setOnAction(new EventHandler<ActionEvent>() {
+        if (minimize != null) { // Utility Stage
+            minimizeMenuItem = new MenuItem("Minimize");
+            minimizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    minimizeProperty().set(!minimizeProperty().get());
+                }
+            });
+            contextMenu.getItems().add(minimizeMenuItem);
+        }
+        if (maximize != null) { // Utility Stage
+            maximizeMenuItem = new MenuItem("Maximize");
+            maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    maximizeProperty().set(!maximizeProperty().get());
+                    contextMenu.hide(); // Stay stuck on screen
+                }
+            });
+            contextMenu.getItems().addAll(maximizeMenuItem,new SeparatorMenuItem());
+        }
+        MenuItem closeMenuItem = new MenuItem("Close");
+        closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 closeProperty().set(!closeProperty().get());
             }
         });
-        contextMenu.getItems().addAll(item1, maximizeMenuItem, new SeparatorMenuItem(), item3);
+        contextMenu.getItems().add(closeMenuItem);
+        
         // menu.setContextMenu(contextMenu);
         menu.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -246,23 +251,26 @@ public class Undecorator extends StackPane {
             }
         });
 
-        maximize.setTooltip(new Tooltip("Maximize"));
-        maximize.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                maximizeProperty().set(!maximizeProperty().get());
-            }
-        });
-
+        if (maximize != null) { // Utility Stage
+            maximize.setTooltip(new Tooltip("Maximize"));
+            maximize.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    maximizeProperty().set(!maximizeProperty().get());
+                }
+            });
+        }
 
         // Minimize button
-        minimize.setTooltip(new Tooltip("Minimize"));
-        minimize.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                minimizeProperty().set(!minimizeProperty().get());
-            }
-        });
+        if (minimize != null) { // Utility Stage
+            minimize.setTooltip(new Tooltip("Minimize"));
+            minimize.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    minimizeProperty().set(!minimizeProperty().get());
+                }
+            });
+        }
     }
 
     public SimpleBooleanProperty maximizeProperty() {
