@@ -1,6 +1,8 @@
 package insidefx.undecorator;
 
 import java.util.logging.Level;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
@@ -9,8 +11,11 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -332,23 +337,22 @@ public class UndecoratorController {
         });
 
     }
-
     /**
      * Simulate Windows behavior on screen's edges
      */
     void testEdges(Stage stage, MouseEvent mouseEvent) {
-        /*
-         ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
-         Screen screen = screensForRectangle.get(0);
-         Rectangle2D visualBounds = screen.getVisualBounds();
-         if (mouseEvent.getScreenX() == visualBounds.getMinX()) {
-         System.err.println("Dock Left");
-         } else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
-         System.err.println("Dock Right");
-         } else if (mouseEvent.getScreenY() == visualBounds.getMinY()) {
-         undecorator.maximizeProperty.set(true);
-         }
-         */
+/*
+        ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+        Screen screen = screensForRectangle.get(0);
+        Rectangle2D visualBounds = screen.getVisualBounds();
+        if (mouseEvent.getScreenX() == visualBounds.getMinX()) {
+            System.err.println("Dock Left");
+        } else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
+            System.err.println("Dock Right");
+        } else if (mouseEvent.getScreenY() == visualBounds.getMinY()) {
+            // undecorator.maximizeProperty.set(true);
+        }
+*/
     }
 
     public boolean isRightEdge(double x, double y, Bounds boundsInParent) {

@@ -2,3 +2,4 @@ build
 *.bak
 blog.txt
 private.properties
+!nbproject/private/

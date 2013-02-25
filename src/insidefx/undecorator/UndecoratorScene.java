@@ -57,7 +57,7 @@ public class UndecoratorScene extends Scene {
             stageDecorationFxml = DEFAULT_STAGEDECORATION;
         }
         if (stageStyle == StageStyle.UTILITY) {
-              stageDecorationFxml = DEFAULT_STAGEDECORATION_UTILITY;
+            stageDecorationFxml = DEFAULT_STAGEDECORATION_UTILITY;
         }
         undecorator = new Undecorator(stage, root, stageDecorationFxml);
         super.setRoot(undecorator);
@@ -65,7 +65,7 @@ public class UndecoratorScene extends Scene {
         // Customize it by CSS if needed:
         if (stageStyle == StageStyle.UTILITY) {
             undecorator.getStylesheets().add(DEFAULT_STYLESHEET_UTILITY);
-          
+
         } else {
             undecorator.getStylesheets().add(DEFAULT_STYLESHEET);
         }
@@ -93,6 +93,7 @@ public class UndecoratorScene extends Scene {
     }
 
     public void setBackgroundPaint(Paint paint) {
+        undecorator.removeDefaultBackgroundStyleClass();
         undecorator.getBackground().setFill(paint);
     }
 }

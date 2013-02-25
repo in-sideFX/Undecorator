@@ -11,7 +11,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  *
@@ -27,7 +26,7 @@ public class UndecoratorSceneDemo extends Application {
         // The Undecorator as a Scene
         UndecoratorScene undecoratorScene = new UndecoratorScene(stage, root);
        // UndecoratorScene undecoratorScene = new UndecoratorScene(stage, StageStyle.UTILITY,root,null);
-       
+
         // Optional: Enable this node to drag the stage
         // By default the root argument of Undecorator is set as draggable
         Node node = root.lookup("#draggableNode");
@@ -37,7 +36,6 @@ public class UndecoratorSceneDemo extends Application {
         stage.setMinWidth(500);
         stage.setMinHeight(400);
 
-        stage.setTitle("No title bar");
         stage.setScene(undecoratorScene);
         
         stage.show();
