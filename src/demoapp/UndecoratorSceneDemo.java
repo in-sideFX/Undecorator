@@ -39,7 +39,7 @@ public class UndecoratorSceneDemo extends Application {
 
         stage.setTitle("No title bar");
         stage.setScene(undecoratorScene);
-
+        
         stage.show();
     }
 

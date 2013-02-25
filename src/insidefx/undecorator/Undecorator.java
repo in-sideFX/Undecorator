@@ -1,4 +1,5 @@
 /*
+ * BSD
  * Copyright (c) 2013, Arnaud Nouard
  All rights reserved.
 
@@ -42,6 +43,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -58,7 +60,7 @@ import javafx.stage.Stage;
 
 /**
  * The Stage Decorator TODO: API, utility style, win7 window behavior on
- * edge,Themes, title bar
+ * edge,Themes, title bar, i18n, accelerator, effect and animation
  */
 public class Undecorator extends StackPane {
 
@@ -73,6 +75,8 @@ public class Undecorator extends StackPane {
     @FXML
     private Button resize;
     MenuItem maximizeMenuItem;
+    CheckMenuItem fullScreenMenuItem;
+    
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     Node clientArea;
     Pane stageDecoration = null;
@@ -173,7 +177,10 @@ public class Undecorator extends StackPane {
         stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                setShadow(t1.booleanValue());
+                setShadow(!t1.booleanValue());
+                fullScreenMenuItem.setSelected(t1.booleanValue());
+                maximize.setVisible(!t1.booleanValue());
+                minimize.setVisible(!t1.booleanValue());
             }
         });
     }
@@ -214,8 +221,18 @@ public class Undecorator extends StackPane {
                 closeProperty().set(!closeProperty().get());
             }
         });
-        contextMenu.getItems().add(closeMenuItem);
-        
+
+        fullScreenMenuItem = new CheckMenuItem("Full Screen");
+        fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                // fake
+                //maximizeProperty().set(!maximizeProperty().get());
+                undecoratorController.setFullScreen(!stage.isFullScreen());
+            }
+        });
+
+        contextMenu.getItems().addAll(closeMenuItem, new SeparatorMenuItem(), fullScreenMenuItem);
         // menu.setContextMenu(contextMenu);
         menu.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -295,8 +312,16 @@ public class Undecorator extends StackPane {
         undecoratorController.setAsStageDraggable(stage, node);
     }
 
-    protected void setShadow(boolean b) {
-        if (!b) {
+    protected void setShadow(boolean shadow) {
+        // Already removed?
+        if (!shadow && shadowRectangle.getEffect() == null) {
+            return;
+        }
+        // From fullscreen to maximize situation
+        if (shadow && maximizeProperty.get()) {
+            return;
+        }
+        if (!shadow) {
             shadowRectangle.setEffect(null);
             SAVED_SHADOW_WIDTH = SHADOW_WIDTH;
             SHADOW_WIDTH = 0;

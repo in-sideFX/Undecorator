@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -69,9 +70,14 @@ public class UndecoratorController {
         }
     }
 
+    protected void setFullScreen(boolean value) {
+        Stage stage = undecorator.getStage();
+        stage.setFullScreen(value);
+    }
+
     public void close() {
         Stage stage = undecorator.getStage();
-        stage.hide();   // TODO: real close
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
     public void minimize() {
@@ -332,18 +338,17 @@ public class UndecoratorController {
      */
     void testEdges(Stage stage, MouseEvent mouseEvent) {
         /*
-        ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
-        Screen screen = screensForRectangle.get(0);
-        Rectangle2D visualBounds = screen.getVisualBounds();
-        if (mouseEvent.getScreenX() == visualBounds.getMinX()) {
-            System.err.println("Dock Left");
-        } else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
-            System.err.println("Dock Right");
-        } else if (mouseEvent.getScreenY() == visualBounds.getMinY()) {
-            undecorator.maximizeProperty.set(true);
-        }
-*/
-
+         ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+         Screen screen = screensForRectangle.get(0);
+         Rectangle2D visualBounds = screen.getVisualBounds();
+         if (mouseEvent.getScreenX() == visualBounds.getMinX()) {
+         System.err.println("Dock Left");
+         } else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
+         System.err.println("Dock Right");
+         } else if (mouseEvent.getScreenY() == visualBounds.getMinY()) {
+         undecorator.maximizeProperty.set(true);
+         }
+         */
     }
 
     public boolean isRightEdge(double x, double y, Bounds boundsInParent) {
