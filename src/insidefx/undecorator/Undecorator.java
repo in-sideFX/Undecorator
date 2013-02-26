@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -59,13 +60,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 /**
  * The Stage Decorator TODO: win7 window behavior on edge, Themes, title bar,
  * accelerator, effect and animation, stage icons
  */
 public class Undecorator extends StackPane {
-    
+
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     public static ResourceBundle LOC;
     @FXML
@@ -95,14 +98,14 @@ public class Undecorator extends StackPane {
     SimpleBooleanProperty minimizeProperty;
     SimpleBooleanProperty closeProperty;
     String backgroundStyleClass = "undecorator-background";
-    
+
     public Undecorator(Stage stage, final Node root) {
         this(stage, root, "stagedecoration.fxml");
     }
-    
+
     public Undecorator(Stage stage, final Node root, String stageDecorationFxml) {
         this.stage = stage;
-        
+
         loadConfig();
 
         // Properties 
@@ -117,10 +120,22 @@ public class Undecorator extends StackPane {
         minimizeProperty.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                getController().minimize();
+                /*
+                 * Transition
+                 */
+               /* FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
+                fadeTransition.setToValue(0);
+                fadeTransition.play();
+                fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent t) {*/
+                
+                        getController().minimize();
+                /*    }
+                });*/
             }
         });
-        
+
         closeProperty = new SimpleBooleanProperty(false);
         closeProperty.addListener(new ChangeListener<Boolean>() {
             @Override
@@ -131,13 +146,13 @@ public class Undecorator extends StackPane {
 
         // The controller
         undecoratorController = new UndecoratorController(this);
-        
+
         undecoratorController.setAsStageDraggable(stage, root);
 
         // radius, spread, offsets
         dsFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, SHADOW_WIDTH, 0.1, 0, 0);
         dsNotFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.DARKGREY, SHADOW_WIDTH, 0, 0, 0);
-        
+
         shadowRectangle = new Rectangle();
 
         // UI part of the decoration
@@ -186,6 +201,21 @@ public class Undecorator extends StackPane {
                 minimize.setVisible(!t1.booleanValue());
             }
         });
+
+        /*
+         * Transition
+         */
+        super.setOpacity(0);
+        stage.showingProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (t1.booleanValue()) {
+                    FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
+                    fadeTransition.setToValue(1);
+                    fadeTransition.play();
+                }
+            }
+        });
     }
 
     public void removeDefaultBackgroundStyleClass() {
@@ -195,7 +225,7 @@ public class Undecorator extends StackPane {
     public Rectangle getBackground() {
         return shadowRectangle;
     }
-    
+
     public void initDecoration() {
         MenuItem minimizeMenuItem = null;
         // Menu
@@ -228,7 +258,7 @@ public class Undecorator extends StackPane {
                 closeProperty().set(!closeProperty().get());
             }
         });
-        
+
         fullScreenMenuItem = new CheckMenuItem(LOC.getString("FullScreen"));
         fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -238,7 +268,7 @@ public class Undecorator extends StackPane {
                 undecoratorController.setFullScreen(!stage.isFullScreen());
             }
         });
-        
+
         contextMenu.getItems().addAll(closeMenuItem, new SeparatorMenuItem(), fullScreenMenuItem);
         // menu.setContextMenu(contextMenu);
         menu.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -274,7 +304,7 @@ public class Undecorator extends StackPane {
                 }
             }
         });
-        
+
         if (maximize != null) { // Utility Stage
             maximize.setTooltip(new Tooltip(LOC.getString("Maximize")));
             maximize.setOnAction(new EventHandler<ActionEvent>() {
@@ -296,15 +326,15 @@ public class Undecorator extends StackPane {
             });
         }
     }
-    
+
     public SimpleBooleanProperty maximizeProperty() {
         return maximizeProperty;
     }
-    
+
     public SimpleBooleanProperty minimizeProperty() {
         return minimizeProperty;
     }
-    
+
     public SimpleBooleanProperty closeProperty() {
         return closeProperty;
     }
@@ -318,7 +348,7 @@ public class Undecorator extends StackPane {
     public void setAsStageDraggable(Stage stage, Node node) {
         undecoratorController.setAsStageDraggable(stage, node);
     }
-    
+
     protected void setShadow(boolean shadow) {
         // Already removed?
         if (!shadow && shadowRectangle.getEffect() == null) {
@@ -337,7 +367,7 @@ public class Undecorator extends StackPane {
             SHADOW_WIDTH = SAVED_SHADOW_WIDTH;
         }
     }
-    
+
     protected void setShadowFocused(boolean b) {
         if (b) {
             shadowRectangle.setEffect(dsFocused);
@@ -345,7 +375,7 @@ public class Undecorator extends StackPane {
             shadowRectangle.setEffect(dsNotFocused);
         }
     }
-    
+
     @Override
     public void layoutChildren() {
         Bounds b = super.getLayoutBounds();
@@ -374,18 +404,18 @@ public class Undecorator extends StackPane {
             }
         }
     }
-    
+
     public UndecoratorController getController() {
         return undecoratorController;
     }
-    
+
     public Stage getStage() {
         return stage;
     }
-    
+
     static void loadConfig() {
         Properties prop = new Properties();
-        
+
         try {
             prop.load(Undecorator.class.getClassLoader().getResourceAsStream("skin/undecorator.properties"));
             SHADOW_WIDTH = Integer.parseInt(prop.getProperty("window-shadow-width"));
@@ -394,6 +424,6 @@ public class Undecorator extends StackPane {
             LOGGER.log(Level.SEVERE, "Error while loading confguration flie", ex);
         }
         LOC = ResourceBundle.getBundle("insidefx/undecorator/resources/localization", Locale.getDefault());
-        
+
     }
 }

@@ -96,4 +96,7 @@ public class UndecoratorScene extends Scene {
         undecorator.removeDefaultBackgroundStyleClass();
         undecorator.getBackground().setFill(paint);
     }
+    public Undecorator getUndecorator(){
+        return undecorator;
+    }
 }
