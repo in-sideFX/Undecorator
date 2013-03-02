@@ -467,6 +467,8 @@ public class Undecorator extends StackPane {
         dockFeedback.setStrokeWidth(FEEDBACK_STROKE);
         dockFeedback.setFill(null);
         dockFeedback.setOpacity(0);
+        dockFeedback.setVisible(false);
+        addGlassPane(dockFeedback);
     }
 
     /**
@@ -478,14 +480,14 @@ public class Undecorator extends StackPane {
     public void setDockFeedbackVisible(double x, double y, double width, double height) {
 
 
-
+        dockFeedback.setVisible(true);
 
         dockFeedback.setLayoutX(x);
         dockFeedback.setLayoutY(y);
         dockFeedback.setWidth(width);
         dockFeedback.setHeight(height);
 
-        addGlassPane(dockFeedback);
+      
 
         FadeTransition fadeTransition = FadeTransitionBuilder.create()
                 .duration(Duration.millis(100))
@@ -510,7 +512,7 @@ public class Undecorator extends StackPane {
         parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                removeGlassPane(dockFeedback);
+                dockFeedback.setVisible(false);
             }
         });
         parallelTransition.play();
@@ -518,7 +520,7 @@ public class Undecorator extends StackPane {
 
     public void setDockFeedbackUnVisible() {
         if (parallelTransition != null) {
-            removeGlassPane(dockFeedback);
+            dockFeedback.setVisible(false);
             parallelTransition.stop();
         }
     }

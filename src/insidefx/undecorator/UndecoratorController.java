@@ -452,7 +452,7 @@ public class UndecoratorController {
             return DOCK_LEFT;
         } else if (mouseEvent.getScreenX() >= maxX - 1) { // MaxX returns the width? Not width -1 ?!
             return DOCK_RIGHT;
-        } else if (mouseEvent.getScreenY() == minY) {
+        } else if (mouseEvent.getScreenY() <= minY) {   // Mac menu bar
             return DOCK_TOP;
         }
         return 0;
@@ -491,7 +491,7 @@ public class UndecoratorController {
             stage.setWidth(visualBounds.getWidth() / 2);
             stage.setHeight(visualBounds.getHeight());
             undecorator.setShadow(false);
-        } else if (mouseEvent.getScreenY() == visualBounds.getMinY()) {
+        } else if (mouseEvent.getScreenY() <= visualBounds.getMinY()) { // Mac menu bar
             undecorator.maximizeProperty.set(true);
         }
 
