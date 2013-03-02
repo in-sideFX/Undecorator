@@ -46,26 +46,44 @@ public class UndecoratorScene extends Scene {
     static public final String DEFAULT_STAGEDECORATION_UTILITY = "stageUtilityDecoration.fxml";
     Undecorator undecorator;
 
+    /**
+     * Basic constructor with built-in behavior
+     *
+     * @param stage The main stage
+     * @param root your UI to be displayed in the Stage
+     */
     public UndecoratorScene(Stage stage, Parent root) {
         this(stage, StageStyle.TRANSPARENT, root, DEFAULT_STAGEDECORATION);
     }
 
+    /**
+     * UndecoratorScene constructor
+     *
+     * @param stage The main stage
+     * @param stageStyle could be StageStyle.UTILITY or StageStyle.TRANSPARENT
+     * @param root your UI to be displayed in the Stage
+     * @param stageDecorationFxml Your own Stage decoration or null to use the
+     * built-in one
+     */
     public UndecoratorScene(Stage stage, StageStyle stageStyle, Parent root, String stageDecorationFxml) {
 
         super(root);
+        /*
+         * Fxml
+         */
         if (stageDecorationFxml == null) {
-            stageDecorationFxml = DEFAULT_STAGEDECORATION;
+            if (stageStyle == StageStyle.UTILITY) {
+                stageDecorationFxml = DEFAULT_STAGEDECORATION_UTILITY;
+            } else {
+                stageDecorationFxml = DEFAULT_STAGEDECORATION;
+            }
         }
-        if (stageStyle == StageStyle.UTILITY) {
-            stageDecorationFxml = DEFAULT_STAGEDECORATION_UTILITY;
-        }
-        undecorator = new Undecorator(stage, root, stageDecorationFxml);
+        undecorator = new Undecorator(stage, root, stageDecorationFxml, stageStyle);
         super.setRoot(undecorator);
-
+        
         // Customize it by CSS if needed:
         if (stageStyle == StageStyle.UTILITY) {
             undecorator.getStylesheets().add(DEFAULT_STYLESHEET_UTILITY);
-
         } else {
             undecorator.getStylesheets().add(DEFAULT_STYLESHEET);
         }
@@ -96,7 +114,12 @@ public class UndecoratorScene extends Scene {
         undecorator.removeDefaultBackgroundStyleClass();
         undecorator.getBackground().setFill(paint);
     }
-    public Undecorator getUndecorator(){
+
+    public Undecorator getUndecorator() {
         return undecorator;
+    }
+
+    public void setFadeTransitionEnabled() {
+        undecorator.setFadeTransitionEnabled();
     }
 }

@@ -4,7 +4,6 @@
  */
 package demoapp;
 
-import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
@@ -14,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
@@ -26,12 +26,18 @@ public class UndecoratorSceneDemo extends Application {
     @Override
     public void start(final Stage stage) throws Exception {
         
-        Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
-
         // The Undecorator as a Scene
+        Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, root);
-        // UndecoratorScene undecoratorScene = new UndecoratorScene(stage, StageStyle.UTILITY,root,null);
+ 
+        // Stage Utility usage
+        //Parent root = FXMLLoader.load(getClass().getResource("ClientAreaUtility.fxml"));
+        //final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, StageStyle.UTILITY,root,null);
 
+        // Enable fade transition
+        undecoratorScene.setFadeTransitionEnabled();
+        
+      
         // Optional: Enable this node to drag the stage
         // By default the root argument of Undecorator is set as draggable
         Node node = root.lookup("#draggableNode");
@@ -42,7 +48,7 @@ public class UndecoratorSceneDemo extends Application {
         stage.setMinHeight(400);
         
         /*
-         * Close transition
+         * Fade transition on window closing request
          */
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -61,7 +67,7 @@ public class UndecoratorSceneDemo extends Application {
         });
         
         stage.setScene(undecoratorScene);
-        
+        stage.toFront();
         stage.show();
     }
     

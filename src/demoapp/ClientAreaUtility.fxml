@@ -14,23 +14,25 @@
 
 <VBox pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" xmlns:fx="http://javafx.com/fxml">
   <children>
-    <AnchorPane id="" pickOnBounds="false" prefHeight="37.0" prefWidth="640.0" visible="true">
-      <children>
-        <Label styleClass="logo-label" text="in-sideFX" AnchorPane.rightAnchor="187.0" AnchorPane.topAnchor="-5.0" />
-        <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" styleClass="logo" AnchorPane.rightAnchor="146.0" AnchorPane.topAnchor="-7.0" />
-      </children>
-    </AnchorPane>
+    <HBox prefHeight="32.0" prefWidth="640.0" />
     <AnchorPane id="draggableNode" maxHeight="-1.0" maxWidth="-1.0" pickOnBounds="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-        <SplitPane dividerPositions="0.5996784565916399" focusTraversable="true" prefHeight="287.0" prefWidth="624.0" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="6.0">
+        <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="287.0" prefWidth="624.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="6.0">
           <items>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+              <children>
+                <Label layoutX="14.0" layoutY="14.0" text="Name:" />
+                <TextField disable="false" layoutY="11.0" prefWidth="276.0" text="Utility Stage Style" visible="true" AnchorPane.leftAnchor="77.0" AnchorPane.rightAnchor="14.0" />
+                <TableView prefHeight="229.0" prefWidth="340.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="43.0">
+                  <columns>
+                    <TableColumn prefWidth="75.0" text="Column X" />
+                    <TableColumn prefWidth="75.0" text="Column X" />
+                  </columns>
+                </TableView>
+              </children>
+            </AnchorPane>
             <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
-                <Tab text="Editor">
-                  <content>
-                    <HTMLEditor htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;This is a fake application integrated into the: &lt;p&gt; Undecorator stage!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="200.0" prefWidth="506.0" />
-                  </content>
-                </Tab>
                 <Tab text="Form">
                   <content>
                     <GridPane>
@@ -59,25 +61,14 @@
                 </Tab>
               </tabs>
             </TabPane>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-              <children>
-                <Label layoutX="14.0" layoutY="14.0" text="Name:" />
-                <TextField disable="false" layoutY="11.0" prefWidth="276.0" visible="true" AnchorPane.leftAnchor="77.0" AnchorPane.rightAnchor="14.0" />
-                <TableView prefHeight="229.0" prefWidth="340.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="43.0">
-                  <columns>
-                    <TableColumn prefWidth="75.0" text="Column X" />
-                    <TableColumn prefWidth="75.0" text="Column X" />
-                  </columns>
-                </TableView>
-              </children>
-            </AnchorPane>
           </items>
         </SplitPane>
-        <TextArea id="" prefHeight="58.0" prefWidth="624.0" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0">
-          <effect>
-            <DropShadow offsetX="2.0" offsetY="2.0" />
-          </effect>
-        </TextArea>
+      </children>
+    </AnchorPane>
+    <AnchorPane prefHeight="49.0" prefWidth="640.0">
+      <children>
+        <Button mnemonicParsing="false" text="OK" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+        <Button mnemonicParsing="false" text="Cancel" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="14.0" />
       </children>
     </AnchorPane>
   </children>
