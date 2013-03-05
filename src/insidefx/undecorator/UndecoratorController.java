@@ -32,7 +32,7 @@ public class UndecoratorController {
     private static int RESIZE_PADDING;
     private static int SHADOW_WIDTH;
     Undecorator undecorator;
-    BoundingBox savedBounds;
+    BoundingBox savedBounds, savedFullScreenBounds;
     boolean maximized = false;
     static boolean isMacOS = false;
 
@@ -55,7 +55,7 @@ public class UndecoratorController {
         Stage stage = undecorator.getStage();
 
         if (maximized) {
-            restoreSavedBounds(stage);
+            restoreSavedBounds(stage, false);
             undecorator.setShadow(true);
             savedBounds = null;
             maximized = false;
@@ -81,12 +81,27 @@ public class UndecoratorController {
         savedBounds = new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
     }
 
-    public void restoreSavedBounds(Stage stage) {
+    public void saveFullScreenBounds() {
+        Stage stage = undecorator.getStage();
+        savedFullScreenBounds = new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+    }
+
+    public void restoreSavedBounds(Stage stage, boolean fullscreen) {
+
         stage.setX(savedBounds.getMinX());
         stage.setY(savedBounds.getMinY());
         stage.setWidth(savedBounds.getWidth());
         stage.setHeight(savedBounds.getHeight());
         savedBounds = null;
+    }
+
+    public void restoreFullScreenSavedBounds(Stage stage) {
+
+        stage.setX(savedFullScreenBounds.getMinX());
+        stage.setY(savedFullScreenBounds.getMinY());
+        stage.setWidth(savedFullScreenBounds.getWidth());
+        stage.setHeight(savedFullScreenBounds.getHeight());
+        savedFullScreenBounds = null;
     }
 
     protected void setFullScreen(boolean value) {
@@ -120,8 +135,7 @@ public class UndecoratorController {
             // Maximize on double click
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (undecorator.getStageStyle()!=StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1)
-                {
+                if (undecorator.getStageStyle() != StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
                     undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
                     mouseEvent.consume();
                 }
@@ -305,7 +319,7 @@ public class UndecoratorController {
             // Maximize on double click
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (undecorator.getStageStyle()!=StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
+                if (undecorator.getStageStyle() != StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
                     undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
                     mouseEvent.consume();
                 }
@@ -347,7 +361,7 @@ public class UndecoratorController {
                     stage.setY(mouseEvent.getScreenY() - SHADOW_WIDTH);
                 } // Docked then moved, so restore state
                 else if (savedBounds != null) {
-                    restoreSavedBounds(stage);
+                    restoreSavedBounds(stage, false);
                     undecorator.setShadow(true);
                     // Center
                     stage.setX(mouseEvent.getScreenX() - stage.getWidth() / 2);

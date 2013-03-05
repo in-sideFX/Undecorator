@@ -214,9 +214,9 @@ public class Undecorator extends StackPane {
                 minimize.setVisible(!t1.booleanValue());
                 resize.setVisible(!t1.booleanValue());
                 if (t1.booleanValue()) {
-                    undecoratorController.saveBounds();
+                    undecoratorController.saveFullScreenBounds();
                 } else {
-                    undecoratorController.restoreSavedBounds(stage);
+                    undecoratorController.restoreFullScreenSavedBounds(stage);
                 }
             }
         });
