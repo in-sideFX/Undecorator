@@ -59,12 +59,14 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
@@ -92,7 +94,7 @@ public class Undecorator extends StackPane {
     private Button resize;
     MenuItem maximizeMenuItem;
     CheckMenuItem fullScreenMenuItem;
-    Node clientArea;
+    Region clientArea;
     Pane stageDecoration = null;
     Rectangle shadowRectangle;
     Pane glassPane;
@@ -108,12 +110,14 @@ public class Undecorator extends StackPane {
     SimpleBooleanProperty closeProperty;
     String backgroundStyleClass = "undecorator-background";
 
-    public Undecorator(Stage stage, final Node root) {
-        this(stage, root, "stagedecoration.fxml",StageStyle.UNDECORATED);
+    public Undecorator(Stage stage, Region root) {
+        this(stage, root, "stagedecoration.fxml", StageStyle.UNDECORATED);
     }
 
-    public Undecorator(Stage stag, final Node root, String stageDecorationFxml, StageStyle st) {
+    public Undecorator(Stage stag, Region clientArea, String stageDecorationFxml, StageStyle st) {
         this.stage = stag;
+        this.clientArea = clientArea;
+
         setStageStyle(st);
         loadConfig();
 
@@ -156,7 +160,7 @@ public class Undecorator extends StackPane {
         // The controller
         undecoratorController = new UndecoratorController(this);
 
-        undecoratorController.setAsStageDraggable(stage, root);
+        undecoratorController.setAsStageDraggable(stage, clientArea);
 
         // radius, spread, offsets
         dsFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, SHADOW_WIDTH, 0.1, 0, 0);
@@ -191,7 +195,9 @@ public class Undecorator extends StackPane {
 
         // TODO: how to programmatically get css values? wait for JavaFX custom CSS
         shadowRectangle.getStyleClass().add(backgroundStyleClass);
-        super.getChildren().addAll(shadowRectangle, root, stageDecoration, resizeRect, glassPane);
+
+        // Add all layers
+        super.getChildren().addAll(shadowRectangle, clientArea, stageDecoration, resizeRect, glassPane);
 
         /*
          * Focused stage
@@ -222,6 +228,39 @@ public class Undecorator extends StackPane {
         });
     }
 
+    /*
+     * The sizing is based on client area's bounds.
+     */
+    @Override
+    protected double computePrefWidth(double d) {
+        return clientArea.getPrefWidth() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+    }
+
+    @Override
+    protected double computePrefHeight(double d) {
+        return clientArea.getPrefHeight() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+    }
+
+    @Override
+    protected double computeMaxHeight(double d) {
+        return clientArea.getMaxHeight() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+    }
+
+    @Override
+    protected double computeMinHeight(double d) {
+        return clientArea.getMinHeight() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+    }
+
+    @Override
+    protected double computeMaxWidth(double d) {
+        return clientArea.getMaxWidth() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+    }
+
+    @Override
+    protected double computeMinWidth(double d) {
+        return clientArea.getMinWidth() + SHADOW_WIDTH * 2;
+    }
+
     public void setStageStyle(StageStyle st) {
         stageStyle = st;
     }
@@ -233,7 +272,7 @@ public class Undecorator extends StackPane {
     /**
      * Transition Fade transition on showing and closing
      */
-    public void setFadeTransitionEnabled() {
+    public void setFadeInTransition() {
         super.setOpacity(0);
         stage.showingProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -243,6 +282,18 @@ public class Undecorator extends StackPane {
                     fadeTransition.setToValue(1);
                     fadeTransition.play();
                 }
+            }
+        });
+    }
+
+    public void setFadeOutTransition() {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
+        fadeTransition.setToValue(0);
+        fadeTransition.play();
+        fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                stage.hide();
             }
         });
     }
@@ -487,7 +538,7 @@ public class Undecorator extends StackPane {
         dockFeedback.setWidth(width);
         dockFeedback.setHeight(height);
 
-      
+
 
         FadeTransition fadeTransition = FadeTransitionBuilder.create()
                 .duration(Duration.millis(100))

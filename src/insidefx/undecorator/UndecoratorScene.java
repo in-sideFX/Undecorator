@@ -27,8 +27,8 @@
 package insidefx.undecorator;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
@@ -52,7 +52,7 @@ public class UndecoratorScene extends Scene {
      * @param stage The main stage
      * @param root your UI to be displayed in the Stage
      */
-    public UndecoratorScene(Stage stage, Parent root) {
+    public UndecoratorScene(Stage stage, Region root) {
         this(stage, StageStyle.TRANSPARENT, root, DEFAULT_STAGEDECORATION);
     }
 
@@ -65,9 +65,10 @@ public class UndecoratorScene extends Scene {
      * @param stageDecorationFxml Your own Stage decoration or null to use the
      * built-in one
      */
-    public UndecoratorScene(Stage stage, StageStyle stageStyle, Parent root, String stageDecorationFxml) {
+    public UndecoratorScene(Stage stage, StageStyle stageStyle, Region root, String stageDecorationFxml) {
 
         super(root);
+        
         /*
          * Fxml
          */
@@ -92,7 +93,7 @@ public class UndecoratorScene extends Scene {
         stage.initStyle(StageStyle.TRANSPARENT);
         super.setFill(Color.TRANSPARENT);
     }
-
+    
     public void removeDefaultStylesheet() {
         undecorator.getStylesheets().remove(DEFAULT_STYLESHEET);
         undecorator.getStylesheets().remove(DEFAULT_STYLESHEET_UTILITY);
@@ -119,7 +120,10 @@ public class UndecoratorScene extends Scene {
         return undecorator;
     }
 
-    public void setFadeTransitionEnabled() {
-        undecorator.setFadeTransitionEnabled();
+    public void setFadeInTransition() {
+        undecorator.setFadeInTransition();
+    }
+    public void setFadeOutTransition() {
+        undecorator.setFadeOutTransition();
     }
 }

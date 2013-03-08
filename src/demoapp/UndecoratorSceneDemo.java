@@ -11,7 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -26,7 +26,7 @@ public class UndecoratorSceneDemo extends Application {
     public void start(final Stage stage) throws Exception {
         
         // The Undecorator as a Scene
-        Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
+        Region root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, root);
  
         // Stage Utility usage
@@ -34,38 +34,26 @@ public class UndecoratorSceneDemo extends Application {
         //final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, StageStyle.UTILITY,root,null);
 
         // Enable fade transition
-        undecoratorScene.setFadeTransitionEnabled();
-        
+        undecoratorScene.setFadeInTransition();
       
         // Optional: Enable this node to drag the stage
         // By default the root argument of Undecorator is set as draggable
         Node node = root.lookup("#draggableNode");
         undecoratorScene.setAsStageDraggable(stage, node);
 
-        // Set minimum size
-        stage.setMinWidth(500);
-        stage.setMinHeight(400);
-        
         /*
          * Fade transition on window closing request
          */
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
-            public void handle(WindowEvent t) {
-                t.consume();
-                FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), undecoratorScene.getUndecorator());
-                fadeTransition.setToValue(0);
-                fadeTransition.play();
-                fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent t) {
-                        stage.hide();
-                    }
-                });
+            public void handle(WindowEvent we) {
+                we.consume();   // Do not hide
+                undecoratorScene.setFadeOutTransition();
             }
         });
         
         stage.setScene(undecoratorScene);
+        stage.sizeToScene();
         stage.toFront();
         stage.show();
     }

@@ -9,8 +9,8 @@ import insidefx.undecorator.Undecorator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -24,7 +24,7 @@ public class UndecoratorStageDemo extends Application {
     @Override
     public void start(final Stage stage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
+        Region root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         Undecorator undecorator;
         undecorator = new Undecorator(stage, root);
         // Customize it by CSS if needed:
