@@ -12,7 +12,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" xmlns:fx="http://javafx.com/fxml">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="300.0" minWidth="400.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" xmlns:fx="http://javafx.com/fxml">
   <children>
     <AnchorPane id="" pickOnBounds="false" prefHeight="37.0" prefWidth="640.0" visible="true">
       <children>

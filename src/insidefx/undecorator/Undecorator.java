@@ -66,7 +66,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
@@ -226,11 +225,36 @@ public class Undecorator extends StackPane {
                 }
             }
         });
+        computeAllSize();
     }
 
+    /**
+     * Init the minimum/pref/max size in order to be reflected in the primary stage
+     */
+    private void computeAllSize() {
+        double minWidth = minWidth(getHeight());
+        setMinWidth(minWidth);
+        double minHeight = minHeight(getWidth());
+        setMinHeight(minHeight);
+
+        double prefHeight = prefHeight(getWidth());
+        setPrefHeight(prefHeight);
+        double prefWidth = prefWidth(getHeight());
+        setPrefWidth(prefWidth);
+
+        double maxWidth = maxWidth(getHeight());
+        if (maxWidth > 0) {
+            setMaxWidth(maxWidth);
+        }
+        double maxHeight = maxHeight(getWidth());
+        if (maxHeight > 0) {
+            setMaxHeight(maxHeight);
+        }
+    }
     /*
      * The sizing is based on client area's bounds.
      */
+
     @Override
     protected double computePrefWidth(double d) {
         return clientArea.getPrefWidth() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
@@ -248,7 +272,9 @@ public class Undecorator extends StackPane {
 
     @Override
     protected double computeMinHeight(double d) {
-        return clientArea.getMinHeight() + SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+        double d2 = super.computeMinHeight(d);
+        d2 += SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+        return d2;
     }
 
     @Override
@@ -258,7 +284,9 @@ public class Undecorator extends StackPane {
 
     @Override
     protected double computeMinWidth(double d) {
-        return clientArea.getMinWidth() + SHADOW_WIDTH * 2;
+        double d2 = super.computeMinWidth(d);
+        d2 += SHADOW_WIDTH * 2 + RESIZE_PADDING * 2;
+        return d2;
     }
 
     public void setStageStyle(StageStyle st) {

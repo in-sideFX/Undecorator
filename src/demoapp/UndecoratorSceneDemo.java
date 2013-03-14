@@ -4,6 +4,7 @@
  */
 package demoapp;
 
+import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
@@ -21,21 +22,21 @@ import javafx.util.Duration;
  * @author in-sideFX
  */
 public class UndecoratorSceneDemo extends Application {
-    
+
     @Override
     public void start(final Stage stage) throws Exception {
-        
+
         // The Undecorator as a Scene
         Region root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, root);
- 
+
         // Stage Utility usage
         //Parent root = FXMLLoader.load(getClass().getResource("ClientAreaUtility.fxml"));
         //final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, StageStyle.UTILITY,root,null);
 
         // Enable fade transition
         undecoratorScene.setFadeInTransition();
-      
+
         // Optional: Enable this node to drag the stage
         // By default the root argument of Undecorator is set as draggable
         Node node = root.lookup("#draggableNode");
@@ -51,13 +52,19 @@ public class UndecoratorSceneDemo extends Application {
                 undecoratorScene.setFadeOutTransition();
             }
         });
-        
+
         stage.setScene(undecoratorScene);
         stage.sizeToScene();
         stage.toFront();
+        
+        // Set minimum size based on client area's minimum sizes
+        Undecorator undecorator = undecoratorScene.getUndecorator();
+        stage.setMinWidth(undecorator.getMinWidth());
+        stage.setMinHeight(undecorator.getMinHeight());
+        
         stage.show();
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }
