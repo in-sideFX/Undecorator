@@ -35,6 +35,7 @@ public class UndecoratorController {
     BoundingBox savedBounds, savedFullScreenBounds;
     boolean maximized = false;
     static boolean isMacOS = false;
+    static final int MAXIMIZE_BORDER = 20;  // Allow double click to maximize on top of the Scene
 
     {
         String os = System.getProperty("os.name").toLowerCase();
@@ -136,8 +137,10 @@ public class UndecoratorController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (undecorator.getStageStyle() != StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
-                    undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
-                    mouseEvent.consume();
+                    if (mouseEvent.getSceneY() - SHADOW_WIDTH < MAXIMIZE_BORDER) {
+                        undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
+                        mouseEvent.consume();
+                    }
                 }
             }
         });
@@ -320,8 +323,10 @@ public class UndecoratorController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (undecorator.getStageStyle() != StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
-                    undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
-                    mouseEvent.consume();
+                    if (mouseEvent.getSceneY() - SHADOW_WIDTH < MAXIMIZE_BORDER) {
+                        undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
+                        mouseEvent.consume();
+                    }
                 }
             }
         });
