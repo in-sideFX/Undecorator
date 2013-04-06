@@ -1,6 +1,7 @@
 package insidefx.undecorator;
 
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
@@ -110,8 +111,14 @@ public class UndecoratorController {
     }
 
     public void close() {
-        Stage stage = undecorator.getStage();
-        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+        final Stage stage = undecorator.getStage();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+            }
+        });
+        
     }
 
     public void minimize() {
@@ -270,7 +277,8 @@ public class UndecoratorController {
 
     /**
      * Under Windows, the undecorator Stage could be been dragged below the Task
-     * bar and then no way to grab it again... TODO: Optimize...
+     * bar and then no way to grab it again...
+     * On Mac, do not drag under the menu bar
      *
      * @param y
      */
@@ -280,7 +288,7 @@ public class UndecoratorController {
             if (screensForRectangle.size() > 0) {
                 Screen screen = screensForRectangle.get(0);
                 Rectangle2D visualBounds = screen.getVisualBounds();
-                if (y < visualBounds.getHeight() - 30) {
+                if (y < visualBounds.getHeight() - 30 && y+SHADOW_WIDTH >= visualBounds.getMinY()) {
                     stage.setY(y);
                 }
             }

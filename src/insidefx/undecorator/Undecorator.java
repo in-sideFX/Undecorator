@@ -338,6 +338,7 @@ public class Undecorator extends StackPane {
         MenuItem minimizeMenuItem = null;
         // Menu
         final ContextMenu contextMenu = new ContextMenu();
+        contextMenu.setAutoHide(true);
         if (minimize != null) { // Utility Stage
             minimizeMenuItem = new MenuItem(LOC.getString("Minimize"));
             minimizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -385,7 +386,10 @@ public class Undecorator extends StackPane {
         menu.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                contextMenu.show(menu, Side.BOTTOM, 0, 0);
+                if(contextMenu.isShowing())
+                    contextMenu.hide();
+                else
+                   contextMenu.show(menu, Side.BOTTOM, 0, 0);
             }
         });
 
@@ -517,7 +521,9 @@ public class Undecorator extends StackPane {
             }
         }
     }
-
+    public int getShadowBorderSize(){
+        return SHADOW_WIDTH*2+RESIZE_PADDING*2;
+    }
     public UndecoratorController getController() {
         return undecoratorController;
     }
