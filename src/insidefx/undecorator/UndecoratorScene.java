@@ -92,6 +92,11 @@ public class UndecoratorScene extends Scene {
         // Transparent scene and stage
         stage.initStyle(StageStyle.TRANSPARENT);
         super.setFill(Color.TRANSPARENT);
+        
+        // Icons
+      //  Image image = new Image(getClass().getResourceAsStream("app.jpg"));
+     //   Image image2 = new Image("/demoapp/in-sidefx.png");
+     //   stage.getIcons().addAll(image);
     }
     
     public void removeDefaultStylesheet() {
