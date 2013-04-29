@@ -145,7 +145,7 @@ public class UndecoratorController {
             public void handle(MouseEvent mouseEvent) {
                 if (undecorator.getStageStyle() != StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
                     if (mouseEvent.getSceneY() - SHADOW_WIDTH < MAXIMIZE_BORDER) {
-                        undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
+			undecorator.toggleMaximizeProperty();
                         mouseEvent.consume();
                     }
                 }
@@ -332,7 +332,7 @@ public class UndecoratorController {
             public void handle(MouseEvent mouseEvent) {
                 if (undecorator.getStageStyle() != StageStyle.UTILITY && !stage.isFullScreen() && mouseEvent.getClickCount() > 1) {
                     if (mouseEvent.getSceneY() - SHADOW_WIDTH < MAXIMIZE_BORDER) {
-                        undecorator.maximizeProperty().set(!undecorator.maximizeProperty().get());
+			undecorator.toggleMaximizeProperty();
                         mouseEvent.consume();
                     }
                 }
