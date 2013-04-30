@@ -44,20 +44,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -80,18 +72,8 @@ public class Undecorator extends StackPane {
     static public int FEEDBACK_STROKE = 4;
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     public static ResourceBundle LOC;
+    private ButtonController buttonController;
     StageStyle stageStyle;
-    @FXML
-    private Button menu;
-    @FXML
-    private Button close;
-    @FXML
-    private Button maximize;
-    @FXML
-    private Button minimize;
-    @FXML
-    private Button resize;
-    MenuItem maximizeMenuItem;
     CheckMenuItem fullScreenMenuItem;
     Region clientArea;
     Pane stageDecoration = null;
@@ -113,51 +95,22 @@ public class Undecorator extends StackPane {
         this(stage, root, "stagedecoration.fxml", StageStyle.UNDECORATED);
     }
 
+    /**
+     * Creates a new Undecorator with the specified paramaters.
+     * In order to achieve no window buttons, the stageDecorationFxml can be set
+     * to null.
+     * @param stageDecorationFxml controls the locations of the buttons and null 
+     * to not display buttons.
+     */
     public Undecorator(Stage stag, Region clientArea, String stageDecorationFxml, StageStyle st) {
         this.stage = stag;
         this.clientArea = clientArea;
 
-        setStageStyle(st);
         loadConfig();
-
-        // Properties 
-        maximizeProperty = new SimpleBooleanProperty(false);
-        maximizeProperty.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                getController().maximizeOrRestore();
-            }
-        });
-        minimizeProperty = new SimpleBooleanProperty(false);
-        minimizeProperty.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                /*
-                 * Transition
-                 */
-                /* FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
-                 fadeTransition.setToValue(0);
-                 fadeTransition.play();
-                 fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
-                 @Override
-                 public void handle(ActionEvent t) {*/
-
-                getController().minimize();
-                /*    }
-                 });*/
-            }
-        });
-
-        closeProperty = new SimpleBooleanProperty(false);
-        closeProperty.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                getController().close();
-            }
-        });
 
         // The controller
         undecoratorController = new UndecoratorController(this);
+        setStageStyle(st);
 
         undecoratorController.setAsStageDraggable(stage, clientArea);
 
@@ -169,14 +122,20 @@ public class Undecorator extends StackPane {
 
         // UI part of the decoration
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(stageDecorationFxml));
-//            fxmlLoader.setController(new StageDecorationController(this));
-            fxmlLoader.setController(this);
-            stageDecoration = (Pane) fxmlLoader.load();
+	    if(stageDecorationFxml == null){
+		buttonController = null;
+	    }else{
+		buttonController = new ButtonController(undecoratorController,stage);
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(stageDecorationFxml));
+		fxmlLoader.setController(buttonController);
+		stageDecoration = (Pane) fxmlLoader.load();
+	    }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Decorations not found", ex);
         }
-        initDecoration();
+	if(buttonController != null){
+	    buttonController.initDecoration();
+	}
 
         /*
          * Resize rectangle
@@ -196,7 +155,12 @@ public class Undecorator extends StackPane {
         shadowRectangle.getStyleClass().add(backgroundStyleClass);
 
         // Add all layers
-        super.getChildren().addAll(shadowRectangle, clientArea, stageDecoration, resizeRect, glassPane);
+	if(stageDecoration != null){
+	    super.getChildren().addAll(shadowRectangle, clientArea, stageDecoration, resizeRect, glassPane);
+	}else{
+	    super.getChildren().addAll(shadowRectangle, clientArea, resizeRect, glassPane);
+
+	}
 
         /*
          * Focused stage
@@ -215,9 +179,9 @@ public class Undecorator extends StackPane {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 setShadow(!t1.booleanValue());
                 fullScreenMenuItem.setSelected(t1.booleanValue());
-                maximize.setVisible(!t1.booleanValue());
-                minimize.setVisible(!t1.booleanValue());
-                resize.setVisible(!t1.booleanValue());
+		if(buttonController != null){
+		    buttonController.setFullScreen(!t1.booleanValue());
+		}
                 if (t1.booleanValue()) {
                     undecoratorController.saveFullScreenBounds();
                 } else {
@@ -291,6 +255,9 @@ public class Undecorator extends StackPane {
 
     public void setStageStyle(StageStyle st) {
         stageStyle = st;
+	if(buttonController != null){
+	    buttonController.setStageStyle(st);
+	}
     }
 
     public StageStyle getStageStyle() {
@@ -332,128 +299,6 @@ public class Undecorator extends StackPane {
 
     public Rectangle getBackground() {
         return shadowRectangle;
-    }
-
-    public void initDecoration() {
-        MenuItem minimizeMenuItem = null;
-        // Menu
-        final ContextMenu contextMenu = new ContextMenu();
-        contextMenu.setAutoHide(true);
-        if (minimize != null) { // Utility Stage
-            minimizeMenuItem = new MenuItem(LOC.getString("Minimize"));
-            minimizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    minimizeProperty().set(!minimizeProperty().get());
-                }
-            });
-            contextMenu.getItems().add(minimizeMenuItem);
-        }
-        if (maximize != null) { // Utility Stage
-            maximizeMenuItem = new MenuItem(LOC.getString("Maximize"));
-            maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    maximizeProperty().set(!maximizeProperty().get());
-                    contextMenu.hide(); // Stay stuck on screen
-                }
-            });
-            contextMenu.getItems().addAll(maximizeMenuItem, new SeparatorMenuItem());
-        }
-        MenuItem closeMenuItem = new MenuItem(LOC.getString("Close"));
-        closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                closeProperty().set(!closeProperty().get());
-            }
-        });
-
-        contextMenu.getItems().add(closeMenuItem);
-        if (stageStyle != StageStyle.UTILITY) {
-            fullScreenMenuItem = new CheckMenuItem(LOC.getString("FullScreen"));
-            fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    // fake
-                    //maximizeProperty().set(!maximizeProperty().get());
-                    undecoratorController.setFullScreen(!stage.isFullScreen());
-                }
-            });
-
-            contextMenu.getItems().addAll(new SeparatorMenuItem(), fullScreenMenuItem);
-        }
-        // menu.setContextMenu(contextMenu);
-        menu.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if(contextMenu.isShowing())
-                    contextMenu.hide();
-                else
-                   contextMenu.show(menu, Side.BOTTOM, 0, 0);
-            }
-        });
-
-        // Close button
-        close.setTooltip(new Tooltip(LOC.getString("Close")));
-        close.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                closeProperty().set(!closeProperty().get());
-            }
-        });
-
-        // Maximize button
-        // If changed via contextual menu
-        maximizeProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                Tooltip tooltip = maximize.getTooltip();
-                if (tooltip.getText().equals(LOC.getString("Maximize"))) {
-                    tooltip.setText(LOC.getString("Restore"));
-                    maximizeMenuItem.setText(LOC.getString("Restore"));
-                    maximize.getStyleClass().add("decoration-button-restore");
-                    resize.setVisible(false);
-                } else {
-                    tooltip.setText(LOC.getString("Maximize"));
-                    maximizeMenuItem.setText(LOC.getString("Maximize"));
-                    maximize.getStyleClass().remove("decoration-button-restore");
-                    resize.setVisible(true);
-                }
-            }
-        });
-
-        if (maximize != null) { // Utility Stage
-            maximize.setTooltip(new Tooltip(LOC.getString("Maximize")));
-            maximize.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    maximizeProperty().set(!maximizeProperty().get());
-                }
-            });
-        }
-
-        // Minimize button
-        if (minimize != null) { // Utility Stage
-            minimize.setTooltip(new Tooltip(LOC.getString("Minimize")));
-            minimize.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    minimizeProperty().set(!minimizeProperty().get());
-                }
-            });
-        }
-    }
-
-    public SimpleBooleanProperty maximizeProperty() {
-        return maximizeProperty;
-    }
-
-    public SimpleBooleanProperty minimizeProperty() {
-        return minimizeProperty;
-    }
-
-    public SimpleBooleanProperty closeProperty() {
-        return closeProperty;
     }
 
     /**
@@ -622,5 +467,20 @@ public class Undecorator extends StackPane {
         }
         LOC = ResourceBundle.getBundle("insidefx/undecorator/resources/localization", Locale.getDefault());
 
+    }
+
+    /**
+     * Sets the maximize property for the button controller to its opposite.
+     */
+    public void toggleMaximizeProperty(){
+	if(buttonController != null){
+            buttonController.maximizeProperty().set(!buttonController.maximizeProperty().get());
+	}	
+    }
+    /**
+     * Sets the stage to the center of the screen.
+     */
+    public void setCenter(){
+	undecoratorController.setCenterStage(stage);
     }
 }
