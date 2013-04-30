@@ -105,6 +105,23 @@ public class UndecoratorController {
         stage.setHeight(savedFullScreenBounds.getHeight());
         savedFullScreenBounds = null;
     }
+    /**
+     * Sets the stage to the center of the screen.
+     */
+    public void setCenterStage(Stage stage){
+	Screen screen = Screen.getPrimary();
+	Rectangle2D bounds = screen.getVisualBounds();
+
+	double width = stage.getMinWidth();
+	double height = stage.getMinHeight();
+
+	// calculate x
+	double x = bounds.getWidth()/2 - width/2;
+	double y = bounds.getHeight()/2 - height/2;
+	savedBounds = new BoundingBox(x, y, stage.getWidth(), stage.getHeight());
+        stage.setX(x);
+        stage.setY(y);
+    }
 
     protected void setFullScreen(boolean value) {
         Stage stage = undecorator.getStage();
@@ -285,7 +302,7 @@ public class UndecoratorController {
      *
      * @param y
      */
-    void setStageY(Stage stage, double y) {
+    public void setStageY(Stage stage, double y) {
         try {
             ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
             if (screensForRectangle.size() > 0) {
