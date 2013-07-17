@@ -24,8 +24,9 @@ public class UndecoratorStageDemo extends Application {
     public void start(final Stage stage) throws Exception {
 
         Region root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
-        Undecorator undecorator;
-        undecorator = new Undecorator(stage, root);
+
+        
+        Undecorator undecorator = new Undecorator(stage, root);
         // Customize it by CSS if needed:
         undecorator.getStylesheets().add("skin/undecorator.css");
 

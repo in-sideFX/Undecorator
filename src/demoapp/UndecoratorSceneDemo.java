@@ -1,4 +1,4 @@
-/**
+    /**
  * Demo purpose In-SideFX (Un)decorator for JavaFX scene License: You can use
  * this code for any kind of purpose, commercial or not.
  */
@@ -6,16 +6,12 @@ package demoapp;
 
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
 
 /**
  *
@@ -25,7 +21,7 @@ public class UndecoratorSceneDemo extends Application {
 
     @Override
     public void start(final Stage stage) throws Exception {
-
+       
         // The Undecorator as a Scene
         Region root = FXMLLoader.load(getClass().getResource("ClientArea.fxml"));
         final UndecoratorScene undecoratorScene = new UndecoratorScene(stage, root);
@@ -39,8 +35,8 @@ public class UndecoratorSceneDemo extends Application {
 
         // Optional: Enable this node to drag the stage
         // By default the root argument of Undecorator is set as draggable
-        Node node = root.lookup("#draggableNode");
-        undecoratorScene.setAsStageDraggable(stage, node);
+//        Node node = root.lookup("#draggableNode");
+//        undecoratorScene.setAsStageDraggable(stage, node);
 
         /*
          * Fade transition on window closing request

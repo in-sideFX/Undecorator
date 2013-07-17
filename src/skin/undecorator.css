@@ -13,9 +13,9 @@
 
 .undecorator-background {
     -fx-fill:#ffffff;
-    /* -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, #eeeeee88, #55555588 75%, dimgray);
-    -fx-arc-width:25;
-    -fx-arc-height:25;*/
+    /* -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, #eeeeee88, #55555588 75%, dimgray);*/
+    -fx-arc-width:5;
+    -fx-arc-height:5;
 }
 
 /*
@@ -26,25 +26,29 @@
     -fx-border-style: null;
     -fx-background-color: null;
     -fx-background-image:url("./menu.png");
+    -fx-background-repeat:no-repeat;
 }
 
 .decoration-button-menu:hover{
     -fx-background-color: null;
     -fx-background-image:url("./menu-hover.png");
+    -fx-background-repeat:no-repeat;
 }
 /*
-*	Minmize button
+*	Minimize button
 */
 .decoration-button-minimize{
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
     -fx-background-image:url("./minimize.png");
+    -fx-background-repeat:no-repeat;
 }
 
 .decoration-button-minimize:hover{
     -fx-background-color: null;
     -fx-background-image:url("./minimize-hover.png");
+    -fx-background-repeat:no-repeat;
 }
 /*
 *	Maximize button
@@ -54,20 +58,24 @@
     -fx-border-style: null;
     -fx-background-color: null;
     -fx-background-image:url("./maximize.png");
+    -fx-background-repeat:no-repeat;
 }
 .decoration-button-maximize:hover{
     -fx-background-color: null;
     -fx-background-image:url("./maximize-hover.png");
+    -fx-background-repeat:no-repeat;
 }
 .decoration-button-restore{
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
     -fx-background-image:url("./restore.png");
+    -fx-background-repeat:no-repeat;
 }
 .decoration-button-restore:hover{
     -fx-background-color: null;
     -fx-background-image:url("./restore-hover.png");
+    -fx-background-repeat:no-repeat;
 }
 /*
 *	Close button
@@ -77,12 +85,40 @@
     -fx-border-style: null;
     -fx-background-color: null;
     -fx-background-image:url("./close.png");
+    -fx-background-repeat:no-repeat;
 }
 .decoration-button-close:hover{
     -fx-background-color: null;
     -fx-background-image:url("./close-hover.png");
+    -fx-background-repeat:no-repeat;
 }
-
+/*
+*	Fullscreen button
+*/
+.decoration-button-fullscreen{
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-color: null;
+    -fx-background-image:url("./fullscreen.png");
+    -fx-background-repeat:no-repeat;
+}
+.decoration-button-fullscreen:hover{
+    -fx-background-color: null;
+    -fx-background-image:url("./fullscreen.png");
+    -fx-background-repeat:no-repeat;
+}
+.decoration-button-unfullscreen{
+    -fx-background-radius: 0;
+    -fx-border-style: null;
+    -fx-background-color: null;
+    -fx-background-image:url("./unfullscreen.png");
+    -fx-background-repeat:no-repeat;
+}
+.decoration-button-unfullscreen:hover{
+    -fx-background-color: null;
+    -fx-background-image:url("./unfullscreen.png");
+    -fx-background-repeat:no-repeat;
+}
 /*
 *	Resize button
 */
@@ -91,4 +127,5 @@
     -fx-border-style: null;
     -fx-background-color: null;
     -fx-background-image:url("./resizeSE.png");
+    -fx-background-repeat:no-repeat;
 }
