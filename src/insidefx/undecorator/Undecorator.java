@@ -71,8 +71,9 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
- * This class, with the UndecoratorController, is the central class for the decoration of Transparent Stages.
- * The Stage Undecorator TODO: Themes, title bar, accelerator, stage icons
+ * This class, with the UndecoratorController, is the central class for the
+ * decoration of Transparent Stages. The Stage Undecorator TODO: Themes, title
+ * bar, accelerator, stage icons
  */
 public class Undecorator extends StackPane {
 
@@ -114,6 +115,7 @@ public class Undecorator extends StackPane {
     SimpleBooleanProperty closeProperty;
     SimpleBooleanProperty fullscreenProperty;
     String backgroundStyleClass = "undecorator-background";
+    TranslateTransition fullscreenButtonTransition;
 
     public SimpleBooleanProperty maximizeProperty() {
         return maximizeProperty;
@@ -225,9 +227,9 @@ public class Undecorator extends StackPane {
         shadowRectangle.getStyleClass().add(backgroundStyleClass);
         // Do not intercept mouse events on stage's drop shadow
         shadowRectangle.setMouseTransparent(true);
-                
+
         // Add all layers
-        super.getChildren().addAll( shadowRectangle, clientArea, stageDecoration, resizeRect, glassPane);
+        super.getChildren().addAll(shadowRectangle, clientArea, stageDecoration, resizeRect, glassPane);
 
         /*
          * Focused stage
@@ -241,94 +243,92 @@ public class Undecorator extends StackPane {
         /*
          * Fullscreen
          */
-        fullscreen.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (stage.isFullScreen()) {
-                    fullscreen.setOpacity(1);
-                }
-            }
-        });
-
-        fullscreen.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (stage.isFullScreen()) {
-                    fullscreen.setOpacity(0.2);
-                }
-            }
-        });
-        stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean fullscreenState) {
-                setShadow(!fullscreenState.booleanValue());
-                fullScreenMenuItem.setSelected(fullscreenState.booleanValue());
-                maximize.setVisible(!fullscreenState.booleanValue());
-                minimize.setVisible(!fullscreenState.booleanValue());
-                resize.setVisible(!fullscreenState.booleanValue());
-                if (fullscreenState.booleanValue()) {
-                    // String and icon
-                    fullscreen.getStyleClass().add("decoration-button-unfullscreen");
-                    fullscreen.setTooltip(new Tooltip(LOC.getString("Restore")));
-                    
-                    undecoratorController.saveFullScreenBounds();
-                    if (fullscreenButtonTransition != null) {
-                        fullscreenButtonTransition.stop();
+        if (fullscreen != null) {
+            fullscreen.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent t) {
+                    if (stage.isFullScreen()) {
+                        fullscreen.setOpacity(1);
                     }
-                    // Animate the change
-                    fullscreenButtonTransition = TranslateTransitionBuilder.create()
-                            .duration(Duration.millis(3000))
-                            .toX(66)
-                            .node(fullscreen)
-                            .onFinished(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent t) {
-                                    fullscreenButtonTransition = null;
-                                }
-                            })
-                            .build();
-                    fullscreenButtonTransition.play();
-                    fullscreen.setOpacity(0.2);
-                } else {
-                    // String and icon
-                    fullscreen.getStyleClass().add("decoration-button-fullscreen");
-                    fullscreen.setTooltip(new Tooltip(LOC.getString("FullScreen")));
-                
-                    undecoratorController.restoreFullScreenSavedBounds(stage);
-                    fullscreen.setOpacity(1);
-                    if (fullscreenButtonTransition != null) {
-                        fullscreenButtonTransition.stop();
-                    }
-                    // Animate the change
-                    fullscreenButtonTransition = TranslateTransitionBuilder.create()
-                            .duration(Duration.millis(1000))
-                            .toX(0)
-                            .node(fullscreen)
-                            .onFinished(new EventHandler<ActionEvent>() {
-                                     @Override
-                                     public void handle(ActionEvent t) {
-                                         fullscreenButtonTransition = null;
-                                     }
-                                 })
-                            .build();
-
-                        fullscreenButtonTransition.play ();
-                    }
-            
                 }
-            }
+            });
 
-            );
-        computeAllSizes();
+            fullscreen.setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent t) {
+                    if (stage.isFullScreen()) {
+                        fullscreen.setOpacity(0.2);
+                    }
+                }
+            });
+
+            stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean fullscreenState) {
+                    setShadow(!fullscreenState.booleanValue());
+                    fullScreenMenuItem.setSelected(fullscreenState.booleanValue());
+                    maximize.setVisible(!fullscreenState.booleanValue());
+                    minimize.setVisible(!fullscreenState.booleanValue());
+                    resize.setVisible(!fullscreenState.booleanValue());
+                    if (fullscreenState.booleanValue()) {
+                        // String and icon
+                        fullscreen.getStyleClass().add("decoration-button-unfullscreen");
+                        fullscreen.setTooltip(new Tooltip(LOC.getString("Restore")));
+
+                        undecoratorController.saveFullScreenBounds();
+                        if (fullscreenButtonTransition != null) {
+                            fullscreenButtonTransition.stop();
+                        }
+                        // Animate the change
+                        fullscreenButtonTransition = TranslateTransitionBuilder.create()
+                                .duration(Duration.millis(3000))
+                                .toX(66)
+                                .node(fullscreen)
+                                .onFinished(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                fullscreenButtonTransition = null;
+                            }
+                        })
+                                .build();
+                        fullscreenButtonTransition.play();
+                        fullscreen.setOpacity(0.2);
+                    } else {
+                        // String and icon
+                        fullscreen.getStyleClass().add("decoration-button-fullscreen");
+                        fullscreen.setTooltip(new Tooltip(LOC.getString("FullScreen")));
+
+                        undecoratorController.restoreFullScreenSavedBounds(stage);
+                        fullscreen.setOpacity(1);
+                        if (fullscreenButtonTransition != null) {
+                            fullscreenButtonTransition.stop();
+                        }
+                        // Animate the change
+                        fullscreenButtonTransition = TranslateTransitionBuilder.create()
+                                .duration(Duration.millis(1000))
+                                .toX(0)
+                                .node(fullscreen)
+                                .onFinished(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                fullscreenButtonTransition = null;
+                            }
+                        })
+                                .build();
+
+                        fullscreenButtonTransition.play();
+                    }
+
+                }
+            });
         }
+        computeAllSizes();
+    }
 
-        TranslateTransition fullscreenButtonTransition;
-        /**
-         * Init the minimum/pref/max size in order to be reflected in the
-         * primary stage
-         */
-    
-
+    /**
+     * Init the minimum/pref/max size in order to be reflected in the primary
+     * stage
+     */
     private void computeAllSizes() {
         double minWidth = minWidth(getHeight());
         setMinWidth(minWidth);
@@ -411,9 +411,10 @@ public class Undecorator extends StackPane {
             }
         });
     }
+
     /**
-     * Launch the fade out transition.
-     * Must be invoked when the application/window is supposed to be closed 
+     * Launch the fade out transition. Must be invoked when the
+     * application/window is supposed to be closed
      */
     public void setFadeOutTransition() {
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
@@ -434,6 +435,7 @@ public class Undecorator extends StackPane {
     public Rectangle getBackground() {
         return shadowRectangle;
     }
+
     /**
      * Manage buttons and menu items
      */
@@ -452,7 +454,7 @@ public class Undecorator extends StackPane {
             });
             contextMenu.getItems().add(minimizeMenuItem);
         }
-        if (maximize != null) { // Utility Stage
+        if (maximize != null) { // Utility Stage type
             maximizeMenuItem = new MenuItem(LOC.getString("Maximize"));
             maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -463,15 +465,8 @@ public class Undecorator extends StackPane {
             });
             contextMenu.getItems().addAll(maximizeMenuItem, new SeparatorMenuItem());
         }
-        MenuItem closeMenuItem = new MenuItem(LOC.getString("Close"));
-        closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                closeProperty().set(!closeProperty().get());
-            }
-        });
 
-        contextMenu.getItems().add(closeMenuItem);
+        // Fullscreen
         if (stageStyle != StageStyle.UTILITY) {
             fullScreenMenuItem = new CheckMenuItem(LOC.getString("FullScreen"));
             fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -483,9 +478,20 @@ public class Undecorator extends StackPane {
                 }
             });
 
-            contextMenu.getItems().addAll(new SeparatorMenuItem(), fullScreenMenuItem);
+            contextMenu.getItems().addAll(fullScreenMenuItem, new SeparatorMenuItem());
         }
-        // menu.setContextMenu(contextMenu);
+
+        // Close
+        MenuItem closeMenuItem = new MenuItem(LOC.getString("Close"));
+        closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                closeProperty().set(!closeProperty().get());
+            }
+        });
+
+        contextMenu.getItems().add(closeMenuItem);
+
         menu.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
@@ -585,9 +591,11 @@ public class Undecorator extends StackPane {
             SHADOW_WIDTH = SAVED_SHADOW_WIDTH;
         }
     }
+
     /**
      * Set on/off the stage shadow effect
-     * @param b 
+     *
+     * @param b
      */
     protected void setShadowFocused(boolean b) {
         if (b) {
@@ -596,6 +604,7 @@ public class Undecorator extends StackPane {
             shadowRectangle.setEffect(dsNotFocused);
         }
     }
+
     /**
      * Set the layout of different layers of the stage
      */

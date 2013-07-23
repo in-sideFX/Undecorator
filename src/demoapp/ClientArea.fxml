@@ -22,7 +22,7 @@
     </AnchorPane>
     <AnchorPane id="draggableNode" maxHeight="-1.0" maxWidth="-1.0" pickOnBounds="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-        <SplitPane dividerPositions="0.5996784565916399" focusTraversable="true" prefHeight="287.0" prefWidth="624.0" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="6.0">
+        <SplitPane dividerPositions="0.5996784565916399" focusTraversable="true" opacity="1.0" prefHeight="287.0" prefWidth="624.0" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="6.0">
           <items>
             <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
@@ -73,7 +73,8 @@
             </AnchorPane>
           </items>
         </SplitPane>
-        <TextArea id="" prefHeight="58.0" prefWidth="624.0" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0">
+        <Button mnemonicParsing="false" onAction="#handleShowUtilityStage" text="Show Utility stage" AnchorPane.bottomAnchor="57.0" AnchorPane.leftAnchor="9.0" />
+        <TextArea id="" opacity="1.0" prefHeight="34.0" prefWidth="624.0" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0">
           <effect>
             <DropShadow offsetX="2.0" offsetY="2.0" />
           </effect>

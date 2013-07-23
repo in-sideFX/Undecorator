@@ -104,7 +104,7 @@
 }
 .decoration-button-fullscreen:hover{
     -fx-background-color: null;
-    -fx-background-image:url("./fullscreen.png");
+    -fx-background-image:url("./fullscreen-hover.png");
     -fx-background-repeat:no-repeat;
 }
 .decoration-button-unfullscreen{
@@ -116,7 +116,7 @@
 }
 .decoration-button-unfullscreen:hover{
     -fx-background-color: null;
-    -fx-background-image:url("./unfullscreen.png");
+    -fx-background-image:url("./unfullscreen-hover.png");
     -fx-background-repeat:no-repeat;
 }
 /*
