@@ -295,7 +295,7 @@ public class Undecorator extends StackPane {
                         fullscreen.setOpacity(0.2);
                     } else {
                         // String and icon
-                        fullscreen.getStyleClass().add("decoration-button-fullscreen");
+                        fullscreen.getStyleClass().remove("decoration-button-unfullscreen");
                         fullscreen.setTooltip(new Tooltip(LOC.getString("FullScreen")));
 
                         undecoratorController.restoreFullScreenSavedBounds(stage);
