@@ -5,6 +5,7 @@
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
@@ -20,6 +21,11 @@
     <Button fx:id="resize" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" mouseTransparent="true" pickOnBounds="true" prefHeight="10.0" prefWidth="10.0" styleClass="decoration-button-resize" text="" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" />
     <Button id="close" fx:id="menu" layoutX="0.0" mnemonicParsing="false" pickOnBounds="true" prefHeight="30.0" prefWidth="39.0" styleClass="decoration-button-menu" text="" AnchorPane.topAnchor="0.0" />
     <Button id="minimize" fx:id="fullscreen" mnemonicParsing="false" pickOnBounds="true" prefHeight="30.0" prefWidth="34.0" style="" styleClass="decoration-button-fullscreen" text="" AnchorPane.rightAnchor="102.0" AnchorPane.topAnchor="0.0" />
+    <Label fx:id="title" layoutY="7.0" mouseTransparent="true" prefWidth="384.0" text="title bar" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="166.0">
+      <effect>
+        <Glow />
+      </effect>
+    </Label>
   </children>
   <stylesheets>
     <URL value="@../../skin/undecorator.css" />

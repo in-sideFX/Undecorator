@@ -36,8 +36,6 @@ import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.ScaleTransitionBuilder;
 import javafx.animation.TranslateTransition;
 import javafx.animation.TranslateTransitionBuilder;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -50,16 +48,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -72,15 +77,14 @@ import javafx.util.Duration;
 
 /**
  * This class, with the UndecoratorController, is the central class for the
- * decoration of Transparent Stages. The Stage Undecorator TODO: Themes, title
- * bar, accelerator, stage icons
+ * decoration of Transparent Stages. The Stage Undecorator TODO: Themes,
+ * accelerators/Mnemonics, stage icons, multi screen, manage Quit (main stage)
  */
 public class Undecorator extends StackPane {
 
     static public int SHADOW_WIDTH = 15;
     static public int SAVED_SHADOW_WIDTH = 15;
     static public int RESIZE_PADDING = 7;
-    static public int FEEDBACK_SIZE = 60;
     static public int FEEDBACK_STROKE = 4;
     public static final Logger LOGGER = Logger.getLogger("Undecorator");
     public static ResourceBundle LOC;
@@ -97,6 +101,8 @@ public class Undecorator extends StackPane {
     private Button resize;
     @FXML
     private Button fullscreen;
+    @FXML
+    private Label title;
     MenuItem maximizeMenuItem;
     CheckMenuItem fullScreenMenuItem;
     Region clientArea;
@@ -104,6 +110,8 @@ public class Undecorator extends StackPane {
     Rectangle shadowRectangle;
     Pane glassPane;
     Rectangle dockFeedback;
+    FadeTransition dockFadeTransition;
+    Stage dockFeedbackPopup;
     ParallelTransition parallelTransition;
     DropShadow dsFocused;
     DropShadow dsNotFocused;
@@ -159,10 +167,10 @@ public class Undecorator extends StackPane {
                 /*
                  * Transition
                  */
-                /* FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
-                 fadeTransition.setToValue(0);
-                 fadeTransition.play();
-                 fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
+                /* FadeTransition dockFadeTransition = new FadeTransition(Duration.seconds(1), Undecorator.this);
+                 dockFadeTransition.setToValue(0);
+                 dockFadeTransition.play();
+                 dockFadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
                  @Override
                  public void handle(ActionEvent t) {*/
 
@@ -192,7 +200,7 @@ public class Undecorator extends StackPane {
 
         undecoratorController.setAsStageDraggable(stage, clientArea);
 
-        // radius, spread, offsets
+        // Focus drop shadows: radius, spread, offsets
         dsFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.BLACK, SHADOW_WIDTH, 0.1, 0, 0);
         dsNotFocused = new DropShadow(BlurType.THREE_PASS_BOX, Color.DARKGREY, SHADOW_WIDTH, 0, 0, 0);
 
@@ -221,7 +229,7 @@ public class Undecorator extends StackPane {
 
         glassPane = new Pane();
         glassPane.setMouseTransparent(true);
-        buildDockFeedback();
+        buildDockFeedbackStage();
 
         // TODO: how to programmatically get css values? wait for JavaFX custom CSS
         shadowRectangle.getStyleClass().add(backgroundStyleClass);
@@ -257,7 +265,7 @@ public class Undecorator extends StackPane {
                 @Override
                 public void handle(MouseEvent t) {
                     if (stage.isFullScreen()) {
-                        fullscreen.setOpacity(0.2);
+                        fullscreen.setOpacity(0.4);
                     }
                 }
             });
@@ -279,7 +287,7 @@ public class Undecorator extends StackPane {
                         if (fullscreenButtonTransition != null) {
                             fullscreenButtonTransition.stop();
                         }
-                        // Animate the change
+                        // Animate the fullscreen button
                         fullscreenButtonTransition = TranslateTransitionBuilder.create()
                                 .duration(Duration.millis(3000))
                                 .toX(66)
@@ -424,6 +432,9 @@ public class Undecorator extends StackPane {
             @Override
             public void handle(ActionEvent t) {
                 stage.hide();
+                if (dockFeedbackPopup != null && dockFeedbackPopup.isShowing()) {
+                    dockFeedbackPopup.hide();
+                }
             }
         });
     }
@@ -446,6 +457,19 @@ public class Undecorator extends StackPane {
         contextMenu.setAutoHide(true);
         if (minimize != null) { // Utility Stage
             minimizeMenuItem = new MenuItem(LOC.getString("Minimize"));
+            minimizeMenuItem.setMnemonicParsing(true);
+            minimizeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
+            /*
+             * this.fullScreenMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN));
+             * 
+             * button.getScene().getAccelerators().put(
+             new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN), 
+             new Runnable() {
+             @Override public void run() {
+             button.fire();
+             }
+             }
+             );*/
             minimizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -456,6 +480,7 @@ public class Undecorator extends StackPane {
         }
         if (maximize != null) { // Utility Stage type
             maximizeMenuItem = new MenuItem(LOC.getString("Maximize"));
+            maximizeMenuItem.setMnemonicParsing(true);
             maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -469,6 +494,7 @@ public class Undecorator extends StackPane {
         // Fullscreen
         if (stageStyle != StageStyle.UTILITY) {
             fullScreenMenuItem = new CheckMenuItem(LOC.getString("FullScreen"));
+            fullScreenMenuItem.setMnemonicParsing(true);
             fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -477,18 +503,21 @@ public class Undecorator extends StackPane {
                     undecoratorController.setFullScreen(!stage.isFullScreen());
                 }
             });
+            fullScreenMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN));
 
             contextMenu.getItems().addAll(fullScreenMenuItem, new SeparatorMenuItem());
         }
 
         // Close
         MenuItem closeMenuItem = new MenuItem(LOC.getString("Close"));
+        closeMenuItem.setMnemonicParsing(true);
         closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 closeProperty().set(!closeProperty().get());
             }
         });
+        closeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
 
         contextMenu.getItems().add(closeMenuItem);
 
@@ -505,6 +534,7 @@ public class Undecorator extends StackPane {
 
         // Close button
         close.setTooltip(new Tooltip(LOC.getString("Close")));
+        close.setMnemonicParsing(true);
         close.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -561,6 +591,8 @@ public class Undecorator extends StackPane {
                 }
             });
         }
+        // Transfer stage title to undecorator tiltle label
+        title.setText(stage.getTitle());
     }
 
     /**
@@ -573,12 +605,15 @@ public class Undecorator extends StackPane {
         undecoratorController.setAsStageDraggable(stage, node);
     }
 
+    /**
+     * Switch the visibility of the window's drop shadow
+     */
     protected void setShadow(boolean shadow) {
         // Already removed?
         if (!shadow && shadowRectangle.getEffect() == null) {
             return;
         }
-        // From fullscreen to maximize situation
+        // From fullscreen to maximize case
         if (shadow && maximizeProperty.get()) {
             return;
         }
@@ -661,17 +696,46 @@ public class Undecorator extends StackPane {
         glassPane.getChildren().remove(node);
     }
 
-    void buildDockFeedback() {
-        dockFeedback = new Rectangle();
-        dockFeedback.setStroke(Color.GRAY);
-        dockFeedback.setArcHeight(2);
-        dockFeedback.setArcWidth(2);
-        dockFeedback.setStrokeWidth(FEEDBACK_STROKE);
-        dockFeedback.setFill(null);
-        dockFeedback.setOpacity(0);
-        dockFeedback.setVisible(false);
-        addGlassPane(dockFeedback);
+    /**
+     * Prepare Stage for dock feedback display
+     */
+    void buildDockFeedbackStage() {
+        dockFeedbackPopup = new Stage(StageStyle.TRANSPARENT);
+        dockFeedback = new Rectangle(0, 0, 100, 100);
+        dockFeedback.setArcHeight(10);
+        dockFeedback.setArcWidth(10);
+        dockFeedback.setFill(Color.TRANSPARENT);
+        dockFeedback.setStroke(Color.BLACK);
+        dockFeedback.setStrokeWidth(2);
+        dockFeedback.setCache(true);
+        dockFeedback.setCacheHint(CacheHint.SPEED);
+        dockFeedback.setEffect(new DropShadow(BlurType.TWO_PASS_BOX, Color.BLACK, 10, 0.2, 3, 3));
+        dockFeedback.setMouseTransparent(true);
+        BorderPane borderpane = new BorderPane();
+        borderpane.setCenter(dockFeedback);
+        Scene scene = new Scene(borderpane);
+        scene.setFill(Color.TRANSPARENT);
+        dockFeedbackPopup.setScene(scene);
+        dockFeedbackPopup.sizeToScene();
     }
+    /* void buildDockFeedback() {
+     `   dockFeedbackPopup = new Popup();
+     dockFeedbackPopup.setHideOnEscape(false);
+     dockFeedbackPopup.setAutoFix(false);
+     dockFeedback = new Rectangle(0, 0, 100, 100);
+     dockFeedback.setFill(Color.TRANSPARENT);
+     dockFeedback.setStroke(Color.BLACK);
+     dockFeedback.setStrokeWidth(2);
+     dockFeedback.setMouseTransparent(true);
+      
+     // dockFeedback.setStyle("-fx-border-color:black; -fx-border-width:1"); //-fx-background-color: #FFFFFFFF; -fx-background-insets:10;");
+     dockFeedback.setEffect(new DropShadow(SHADOW_WIDTH, Color.BLACK));
+     //BorderPane borderpane = new BorderPane();
+     //        borderpane.setCenter(dockFeedback);
+     dockFeedbackPopup.getContent().add(dockFeedback);
+     //        dockFeedbackPopup.sizeToScene();
+
+     }*/
 
     /**
      * Activate dock feedback on screen's bounds
@@ -680,50 +744,72 @@ public class Undecorator extends StackPane {
      * @param y
      */
     public void setDockFeedbackVisible(double x, double y, double width, double height) {
+        dockFeedbackPopup.setX(x);
+        dockFeedbackPopup.setY(y);
 
+        dockFeedback.setX(SHADOW_WIDTH);
+        dockFeedback.setY(SHADOW_WIDTH);
+        dockFeedback.setHeight(height - SHADOW_WIDTH * 2);
+        dockFeedback.setWidth(width - SHADOW_WIDTH * 2);
 
-        dockFeedback.setVisible(true);
+        dockFeedbackPopup.setWidth(width);
+        dockFeedbackPopup.setHeight(height);
 
-        dockFeedback.setLayoutX(x);
-        dockFeedback.setLayoutY(y);
-        dockFeedback.setWidth(width);
-        dockFeedback.setHeight(height);
+        dockFeedback.setOpacity(1);
+        dockFeedbackPopup.show();
 
-
-
-        FadeTransition fadeTransition = FadeTransitionBuilder.create()
-                .duration(Duration.millis(100))
+        dockFadeTransition = FadeTransitionBuilder.create()
+                .duration(Duration.millis(200))
                 .node(dockFeedback)
                 .fromValue(0)
                 .toValue(1)
                 .autoReverse(true)
-                .cycleCount(4)
-                .build();
-
-        ScaleTransition scaleTransition = ScaleTransitionBuilder.create()
-                .duration(Duration.millis(400))
-                .node(dockFeedback)
-                .fromX(0.4)
-                .fromY(0.4)
-                .toX(1)
-                .toY(1)
-                .build();
-
-        parallelTransition = new ParallelTransition(dockFeedback);
-        parallelTransition.getChildren().addAll(fadeTransition, scaleTransition);
-        parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
+                .cycleCount(3)
+                .onFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                dockFeedback.setVisible(false);
+                //dockFeedback.setVisible(false);
+                //dockFeedbackPopup.hide();
             }
-        });
-        parallelTransition.play();
+        })
+                .build();
+        /*
+         ScaleTransition scaleTransition = ScaleTransitionBuilder.create()
+         .duration(Duration.millis(1000))
+         .node(dockFeedback)
+         .fromX(0.4)
+         .fromY(0.4)
+         .toX(1)
+         .toY(1)
+         .build();
+
+         TranslateTransition translateTransition = TranslateTransitionBuilder.create()
+         .duration(Duration.millis(2000))
+         .node(dockFeedback)
+         .fromY((height * 0.4) / 2)
+         .toY(0)
+         .build();
+
+         parallelTransition = new ParallelTransition(dockFeedback);
+         parallelTransition.getChildren().addAll(dockFadeTransition,scaleTransition);
+         parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent t) {
+         //dockFeedback.setVisible(false);
+         dockFeedbackPopup.hide();
+         }
+         });
+         parallelTransition.play();*/
+        dockFadeTransition.play();
+
     }
 
-    public void setDockFeedbackUnVisible() {
-        if (parallelTransition != null) {
-            dockFeedback.setVisible(false);
-            parallelTransition.stop();
+    public void setDockFeedbackInvisible() {
+        if (dockFeedbackPopup.isShowing()) {
+            dockFeedbackPopup.hide();
+            if (dockFadeTransition != null) {
+                dockFadeTransition.stop();
+            }
         }
     }
 

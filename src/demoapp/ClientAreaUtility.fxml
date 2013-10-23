@@ -17,7 +17,7 @@
     <HBox prefHeight="32.0" prefWidth="640.0" />
     <AnchorPane id="draggableNode" maxHeight="-1.0" maxWidth="-1.0" pickOnBounds="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-        <SplitPane dividerPositions="0.40034364261168387" focusTraversable="true" prefHeight="287.0" prefWidth="624.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="6.0">
+        <SplitPane dividerPositions="0.40034364261168387" focusTraversable="true" prefHeight="227.0" prefWidth="584.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="14.0">
           <items>
             <AnchorPane prefHeight="233.0" prefWidth="217.0">
               <children>
@@ -67,8 +67,8 @@
     </AnchorPane>
     <AnchorPane prefHeight="49.0" prefWidth="640.0">
       <children>
-        <Button mnemonicParsing="false" onAction="#handleUtilityAction" text="OK" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
-        <Button mnemonicParsing="false" onAction="#handleUtilityAction" text="Cancel" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="14.0" />
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#handleUtilityAction" text="OK" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+        <Button cancelButton="true" mnemonicParsing="false" onAction="#handleUtilityAction" text="Cancel" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="14.0" />
       </children>
     </AnchorPane>
   </children>

@@ -23,13 +23,14 @@ import javafx.stage.StageStyle;
  * @author in-sideFX
  */
 public class UndecoratorStageDemo extends Application {
+
     Stage primaryStage;
-    
+
     @Override
     @SuppressWarnings("CallToThreadDumpStack")
     public void start(final Stage stage) throws Exception {
-       primaryStage = stage;
-        
+        primaryStage = stage;
+        primaryStage.setTitle("Undecorator Stage Demo");
         // The UI (Client Area) to display
         Region root = null;
         try {
@@ -64,9 +65,11 @@ public class UndecoratorStageDemo extends Application {
         stage.setMinHeight(undecorator.getMinHeight());
 
     }
- /**
-     * The button's handler in the ClientArea.fxml
-     * Manage the UTILITY mode stages
+
+    /**
+     * The button's handler in the ClientArea.fxml Manage the UTILITY mode
+     * stages
+     *
      * @param event
      */
     @FXML
@@ -82,6 +85,7 @@ public class UndecoratorStageDemo extends Application {
             ex.printStackTrace();
         }
         Stage utilityStage = new Stage();
+        utilityStage.setTitle("Stage Utility type demo");
         UndecoratorScene scene = new UndecoratorScene(utilityStage, StageStyle.UTILITY, root, null);
         utilityStage.setScene(scene);
         utilityStage.initModality(Modality.WINDOW_MODAL);
@@ -102,17 +106,16 @@ public class UndecoratorStageDemo extends Application {
         utilityStage.sizeToScene();
         utilityStage.show();
     }
-    
-    
+
     /**
-     * Handles Utility stage buttons 
-     * @param event 
+     * Handles Utility stage buttons
+     *
+     * @param event
      */
     public void handleUtilityAction(ActionEvent event) {
-        ((Node)event.getSource()).getScene().getWindow().hide();
+        ((Node) event.getSource()).getScene().getWindow().hide();
     }
-    
-    
+
     public static void main(String[] args) {
         launch(args);
     }

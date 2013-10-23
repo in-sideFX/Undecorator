@@ -56,6 +56,8 @@ public class UndecoratorController {
      * Actions
      */
     protected void maximizeOrRestore() {
+
+
         Stage stage = undecorator.getStage();
 
         if (maximized) {
@@ -125,6 +127,21 @@ public class UndecoratorController {
     }
 
     public void minimize() {
+
+        if (!Platform.isFxApplicationThread()) // Ensure on correct thread else hangs X under Unbuntu
+        {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    _minimize();
+                }
+            });
+        } else {
+            _minimize();
+        }
+    }
+
+    private void _minimize() {
         Stage stage = undecorator.getStage();
         stage.setIconified(true);
     }
@@ -282,7 +299,7 @@ public class UndecoratorController {
 
     /**
      * Under Windows, the undecorator Stage could be been dragged below the Task
-     * bar and then no way to grab it again... On Mac, do not drag under the
+     * bar and then no way to grab it again... On Mac, do not drag above the
      * menu bar
      *
      * @param y
@@ -399,7 +416,7 @@ public class UndecoratorController {
         node.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                undecorator.setDockFeedbackUnVisible();
+                undecorator.setDockFeedbackInvisible();
                 setCursor(node, Cursor.DEFAULT);
                 initX = -1;
                 initY = -1;
@@ -428,29 +445,50 @@ public class UndecoratorController {
             if (lastDocked == DOCK_LEFT) {
                 return;
             }
-            double x = mouseEvent.getSceneX() - SHADOW_WIDTH;
-            double y = mouseEvent.getSceneY() - Undecorator.FEEDBACK_SIZE;
-            undecorator.setDockFeedbackVisible(x, y, Undecorator.FEEDBACK_SIZE, Undecorator.FEEDBACK_SIZE * 2);
+            ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+            Screen screen = screensForRectangle.get(0);
+            Rectangle2D visualBounds = screen.getVisualBounds();
+            // Dock Left
+            double x = visualBounds.getMinX();
+            double y = visualBounds.getMinY();
+            double width = visualBounds.getWidth() / 2;
+            double height = visualBounds.getHeight();
+
+            undecorator.setDockFeedbackVisible(x, y, width, height);
             lastDocked = DOCK_LEFT;
         } // Dock Right
         else if (dockSide == DOCK_RIGHT) {
             if (lastDocked == DOCK_RIGHT) {
                 return;
             }
-            double x = mouseEvent.getSceneX() - Undecorator.FEEDBACK_SIZE - Undecorator.FEEDBACK_STROKE * 2 - SHADOW_WIDTH;
-            double y = mouseEvent.getSceneY() - Undecorator.FEEDBACK_SIZE;
-            undecorator.setDockFeedbackVisible(x, y, Undecorator.FEEDBACK_SIZE, Undecorator.FEEDBACK_SIZE * 2);
+            ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+            Screen screen = screensForRectangle.get(0);
+            Rectangle2D visualBounds = screen.getVisualBounds();
+            // Dock Right (visualBounds = (javafx.geometry.Rectangle2D) Rectangle2D [minX = 1440.0, minY=300.0, maxX=3360.0, maxY=1500.0, width=1920.0, height=1200.0])
+            double x = visualBounds.getMinX() + visualBounds.getWidth()/2;
+            double y = visualBounds.getMinY();
+            double width = visualBounds.getWidth() / 2;
+            double height = visualBounds.getHeight();
+
+            undecorator.setDockFeedbackVisible(x, y, width, height);
             lastDocked = DOCK_RIGHT;
         } // Dock top
         else if (dockSide == DOCK_TOP) {
             if (lastDocked == DOCK_TOP) {
                 return;
             }
-            double x = mouseEvent.getSceneX() - Undecorator.FEEDBACK_SIZE - SHADOW_WIDTH;
-            double y = mouseEvent.getSceneY() - SHADOW_WIDTH;
-            undecorator.setDockFeedbackVisible(x, y, Undecorator.FEEDBACK_SIZE * 2, Undecorator.FEEDBACK_SIZE);
+            ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+            Screen screen = screensForRectangle.get(0);
+            Rectangle2D visualBounds = screen.getVisualBounds();
+            // Dock Left
+            double x = visualBounds.getMinX();
+            double y = visualBounds.getMinY();
+            double width = visualBounds.getWidth();
+            double height = visualBounds.getHeight();
+            undecorator.setDockFeedbackVisible(x, y, width, height);
             lastDocked = DOCK_TOP;
         } else {
+            undecorator.setDockFeedbackInvisible();
             lastDocked = DOCK_NONE;
         }
     }
@@ -498,24 +536,16 @@ public class UndecoratorController {
         if (mouseEvent.getScreenX() == visualBounds.getMinX()) {
             savedBounds = new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
 
-//            stage.setX(visualBounds.getMinX() - SHADOW_WIDTH);
-//            stage.setY(visualBounds.getMinY() - SHADOW_WIDTH);
-//            stage.setWidth(visualBounds.getWidth() / 2);
-//            stage.setHeight(visualBounds.getHeight() + 2 * SHADOW_WIDTH);
             stage.setX(visualBounds.getMinX());
             stage.setY(visualBounds.getMinY());
             stage.setWidth(visualBounds.getWidth() / 2);
             stage.setHeight(visualBounds.getHeight());
             undecorator.setShadow(false);
-        } // Dock Right
+        } // Dock Right (visualBounds = [minX = 1440.0, minY=300.0, maxX=3360.0, maxY=1500.0, width=1920.0, height=1200.0])
         else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
             savedBounds = new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
 
-//            stage.setX(visualBounds.getWidth() / 2);
-//            stage.setY(visualBounds.getMinY() - SHADOW_WIDTH);
-//            stage.setWidth(visualBounds.getWidth() / 2 + SHADOW_WIDTH);
-//            stage.setHeight(visualBounds.getHeight() + 2 * SHADOW_WIDTH);
-            stage.setX(visualBounds.getWidth() / 2);
+            stage.setX(visualBounds.getWidth()/2 + visualBounds.getMinX());
             stage.setY(visualBounds.getMinY());
             stage.setWidth(visualBounds.getWidth() / 2);
             stage.setHeight(visualBounds.getHeight());
