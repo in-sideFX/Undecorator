@@ -13,7 +13,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="300.0" minWidth="400.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" styleClass="clientarea-background" xmlns:fx="http://javafx.com/fxml">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="350.0" minWidth="450.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" styleClass="clientarea-background" xmlns:fx="http://javafx.com/fxml">
   <children>
     <AnchorPane id="" pickOnBounds="false" prefHeight="37.0" prefWidth="640.0" visible="true">
       <children>
@@ -37,7 +37,7 @@
           <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
               <children>
-                <AreaChart id="AreaChartNxN" fx:id="areaChart" minHeight="130.0" prefHeight="147.0" prefWidth="421.0" AnchorPane.bottomAnchor="165.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="7.0">
+                <AreaChart fx:id="areaChart" minHeight="130.0" prefHeight="147.0" prefWidth="421.0" AnchorPane.bottomAnchor="165.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="7.0">
                   <xAxis>
                     <NumberAxis side="BOTTOM" />
                   </xAxis>
