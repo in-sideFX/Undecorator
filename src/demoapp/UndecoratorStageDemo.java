@@ -7,11 +7,17 @@ package demoapp;
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -25,7 +31,12 @@ import javafx.stage.StageStyle;
 public class UndecoratorStageDemo extends Application {
 
     Stage primaryStage;
-
+    @FXML
+    private AreaChart areaChart;
+    @FXML
+    private PieChart pieChart;
+    
+    
     @Override
     @SuppressWarnings("CallToThreadDumpStack")
     public void start(final Stage stage) throws Exception {
@@ -57,6 +68,8 @@ public class UndecoratorStageDemo extends Application {
         stage.initStyle(StageStyle.TRANSPARENT);
 
         stage.setScene(scene);
+        // Feed Charts with fake data for demo
+        initCharts();
 
         stage.show();
 
@@ -114,6 +127,74 @@ public class UndecoratorStageDemo extends Application {
      */
     public void handleUtilityAction(ActionEvent event) {
         ((Node) event.getSource()).getScene().getWindow().hide();
+    }
+
+    /**
+     * Demo purpose only, Fill charts with data
+     */
+    void initCharts() {
+
+        final NumberAxis xAxis = new NumberAxis(1, 30, 1);
+        final NumberAxis yAxis = new NumberAxis(-5, 27, 5);
+        xAxis.setForceZeroInRange(true);
+
+        areaChart.setTitle("Temperature Monitoring (in Degrees C)");
+
+        XYChart.Series series1 = new XYChart.Series();
+        series1.setName("March");
+        series1.getData().add(new XYChart.Data(1, -2));
+        series1.getData().add(new XYChart.Data(3, -4));
+        series1.getData().add(new XYChart.Data(6, 0));
+        series1.getData().add(new XYChart.Data(9, 5));
+        series1.getData().add(new XYChart.Data(12, -4));
+        series1.getData().add(new XYChart.Data(15, 6));
+        series1.getData().add(new XYChart.Data(18, 8));
+        series1.getData().add(new XYChart.Data(21, 14));
+        series1.getData().add(new XYChart.Data(24, 4));
+        series1.getData().add(new XYChart.Data(27, 6));
+        series1.getData().add(new XYChart.Data(30, 6));
+
+        XYChart.Series series2 = new XYChart.Series();
+        series2.setName("April");
+        series2.getData().add(new XYChart.Data(1, 4));
+        series2.getData().add(new XYChart.Data(3, 10));
+        series2.getData().add(new XYChart.Data(6, 15));
+        series2.getData().add(new XYChart.Data(9, 8));
+        series2.getData().add(new XYChart.Data(12, 5));
+        series2.getData().add(new XYChart.Data(15, 18));
+        series2.getData().add(new XYChart.Data(18, 15));
+        series2.getData().add(new XYChart.Data(21, 13));
+        series2.getData().add(new XYChart.Data(24, 19));
+        series2.getData().add(new XYChart.Data(27, 21));
+        series2.getData().add(new XYChart.Data(30, 21));
+
+        XYChart.Series series3 = new XYChart.Series();
+        series3.setName("May");
+        series3.getData().add(new XYChart.Data(1, 20));
+        series3.getData().add(new XYChart.Data(3, 15));
+        series3.getData().add(new XYChart.Data(6, 13));
+        series3.getData().add(new XYChart.Data(9, 12));
+        series3.getData().add(new XYChart.Data(12, 14));
+        series3.getData().add(new XYChart.Data(15, 18));
+        series3.getData().add(new XYChart.Data(18, 25));
+        series3.getData().add(new XYChart.Data(21, 25));
+        series3.getData().add(new XYChart.Data(24, 23));
+        series3.getData().add(new XYChart.Data(27, 26));
+        series3.getData().add(new XYChart.Data(30, 26));
+
+        areaChart.setHorizontalZeroLineVisible(true);
+        areaChart.getData().addAll(series1, series2, series3);
+
+        ObservableList<PieChart.Data> pieChartData
+                = FXCollections.observableArrayList(
+                        new PieChart.Data("Grapefruit", 13),
+                        new PieChart.Data("Oranges", 25),
+                        new PieChart.Data("Plums", 10),
+                        new PieChart.Data("Pears", 22),
+                        new PieChart.Data("Apples", 30));
+        pieChart.setData(pieChartData);
+        pieChart.setTitle("Imported Fruits");
+
     }
 
     public static void main(String[] args) {

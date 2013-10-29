@@ -18,10 +18,8 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -75,6 +73,10 @@ public class UndecoratorSceneDemo extends Application {
             }
         });
 
+        // Application icons
+        Image image = new Image("/demoapp/in-sidefx.png");
+        primaryStage.getIcons().addAll(image);
+        
         primaryStage.setScene(undecoratorScene);
         primaryStage.sizeToScene();
         primaryStage.toFront();
@@ -83,11 +85,66 @@ public class UndecoratorSceneDemo extends Application {
         Undecorator undecorator = undecoratorScene.getUndecorator();
         primaryStage.setMinWidth(undecorator.getMinWidth());
         primaryStage.setMinHeight(undecorator.getMinHeight());
-        initUI();
+       
+        // Feed Charts with fake data for demo
+        initCharts();
         primaryStage.show();
     }
 
-    void initUI() {
+    /**
+     * The button's handler in the ClientArea.fxml Manage the UTILITY mode
+     * stages
+     *
+     * @param event
+     */
+    @FXML
+    @SuppressWarnings("CallToThreadDumpStack")
+    private void handleShowUtilityStage(ActionEvent event) {
+        // Stage Utility usage
+        Region root = null;
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ClientAreaUtility.fxml"));
+            fxmlLoader.setController(this);
+            root = (Region) fxmlLoader.load();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        Stage utilityStage = new Stage();
+        utilityStage.setTitle("Stage Utility type demo");
+        UndecoratorScene scene = new UndecoratorScene(utilityStage, StageStyle.UTILITY, root, null);
+        utilityStage.setScene(scene);
+        utilityStage.initModality(Modality.WINDOW_MODAL);
+        utilityStage.initOwner(primaryStage);
+
+        // Set sizes based on client area's sizes
+        Undecorator undecorator = scene.getUndecorator();
+        utilityStage.setMinWidth(undecorator.getMinWidth());
+        utilityStage.setMinHeight(undecorator.getMinHeight());
+        utilityStage.setWidth(undecorator.getPrefWidth());
+        utilityStage.setHeight(undecorator.getPrefHeight());
+        if (undecorator.getMaxWidth() > 0) {
+            utilityStage.setMaxWidth(undecorator.getMaxWidth());
+        }
+        if (undecorator.getMaxHeight() > 0) {
+            utilityStage.setMaxHeight(undecorator.getMaxHeight());
+        }
+        utilityStage.sizeToScene();
+        utilityStage.show();
+    }
+
+    /**
+     * Handles Utility stage buttons
+     *
+     * @param event
+     */
+    public void handleUtilityAction(ActionEvent event) {
+        ((Node) event.getSource()).getScene().getWindow().hide();
+    }
+
+    /**
+     * Demo purpose only, Fill charts with data
+     */
+    void initCharts() {
 
         final NumberAxis xAxis = new NumberAxis(1, 30, 1);
         final NumberAxis yAxis = new NumberAxis(-5, 27, 5);
@@ -150,56 +207,6 @@ public class UndecoratorSceneDemo extends Application {
         pieChart.setData(pieChartData);
         pieChart.setTitle("Imported Fruits");
 
-    }
-
-    /**
-     * The button's handler in the ClientArea.fxml Manage the UTILITY mode
-     * stages
-     *
-     * @param event
-     */
-    @FXML
-    @SuppressWarnings("CallToThreadDumpStack")
-    private void handleShowUtilityStage(ActionEvent event) {
-        // Stage Utility usage
-        Region root = null;
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ClientAreaUtility.fxml"));
-            fxmlLoader.setController(this);
-            root = (Region) fxmlLoader.load();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        Stage utilityStage = new Stage();
-        utilityStage.setTitle("Stage Utility type demo");
-        UndecoratorScene scene = new UndecoratorScene(utilityStage, StageStyle.UTILITY, root, null);
-        utilityStage.setScene(scene);
-        utilityStage.initModality(Modality.WINDOW_MODAL);
-        utilityStage.initOwner(primaryStage);
-
-        // Set sizes based on client area's sizes
-        Undecorator undecorator = scene.getUndecorator();
-        utilityStage.setMinWidth(undecorator.getMinWidth());
-        utilityStage.setMinHeight(undecorator.getMinHeight());
-        utilityStage.setWidth(undecorator.getPrefWidth());
-        utilityStage.setHeight(undecorator.getPrefHeight());
-        if (undecorator.getMaxWidth() > 0) {
-            utilityStage.setMaxWidth(undecorator.getMaxWidth());
-        }
-        if (undecorator.getMaxHeight() > 0) {
-            utilityStage.setMaxHeight(undecorator.getMaxHeight());
-        }
-        utilityStage.sizeToScene();
-        utilityStage.show();
-    }
-
-    /**
-     * Handles Utility stage buttons
-     *
-     * @param event
-     */
-    public void handleUtilityAction(ActionEvent event) {
-        ((Node) event.getSource()).getScene().getWindow().hide();
     }
 
     public static void main(String[] args) {

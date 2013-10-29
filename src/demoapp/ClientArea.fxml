@@ -13,7 +13,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="350.0" minWidth="450.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" styleClass="clientarea-background" xmlns:fx="http://javafx.com/fxml">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="380.0" minWidth="450.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" styleClass="clientarea-background" xmlns:fx="http://javafx.com/fxml">
   <children>
     <AnchorPane id="" pickOnBounds="false" prefHeight="37.0" prefWidth="640.0" visible="true">
       <children>
@@ -30,7 +30,7 @@
                 <DropShadow offsetX="2.0" offsetY="2.0" />
               </effect>
               <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
               </BorderPane.margin>
             </TextArea>
           </bottom>
@@ -72,6 +72,9 @@
               </panes>
             </Accordion>
           </left>
+          <padding>
+            <Insets />
+          </padding>
         </BorderPane>
       </children>
     </AnchorPane>

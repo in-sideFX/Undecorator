@@ -38,6 +38,7 @@ import javafx.animation.FadeTransitionBuilder;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.animation.TranslateTransitionBuilder;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -77,8 +78,12 @@ import javafx.util.Duration;
 
 /**
  * This class, with the UndecoratorController, is the central class for the
- * decoration of Transparent Stages. The Stage Undecorator TODO: Themes,
- * accelerators/Mnemonics, stage icons, multi screen, manage Quit (main stage)
+ * decoration of Transparent Stages. The Stage Undecorator TODO: Themes, manage
+ * Quit (main stage)
+ *
+ * Bugs (Mac only?): Accelerators + Fullscreen crashes JVM KeyCombination does
+ * not respect keyboard's locale Multi screen: On second screen JFX returns
+ * wrong value for MinY (300)
  */
 public class Undecorator extends StackPane {
 
@@ -293,11 +298,11 @@ public class Undecorator extends StackPane {
                                 .toX(66)
                                 .node(fullscreen)
                                 .onFinished(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent t) {
-                                fullscreenButtonTransition = null;
-                            }
-                        })
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        fullscreenButtonTransition = null;
+                                    }
+                                })
                                 .build();
                         fullscreenButtonTransition.play();
                         fullscreen.setOpacity(0.2);
@@ -317,11 +322,11 @@ public class Undecorator extends StackPane {
                                 .toX(0)
                                 .node(fullscreen)
                                 .onFinished(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent t) {
-                                fullscreenButtonTransition = null;
-                            }
-                        })
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        fullscreenButtonTransition = null;
+                                    }
+                                })
                                 .build();
 
                         fullscreenButtonTransition.play();
@@ -331,6 +336,33 @@ public class Undecorator extends StackPane {
             });
         }
         computeAllSizes();
+    }
+
+    /**
+     * Install default accelerators
+     *
+     * @param scene
+     */
+    public void installAccelerators(Scene scene) {
+        // Accelerators
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN), new Runnable() {
+            @Override
+            public void run() {
+                switchFullscreen();
+            }
+        });
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN), new Runnable() {
+            @Override
+            public void run() {
+                switchMinimize();
+            }
+        });
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN), new Runnable() {
+            @Override
+            public void run() {
+                switchClose();
+            }
+        });
     }
 
     /**
@@ -457,34 +489,22 @@ public class Undecorator extends StackPane {
         contextMenu.setAutoHide(true);
         if (minimize != null) { // Utility Stage
             minimizeMenuItem = new MenuItem(LOC.getString("Minimize"));
-            minimizeMenuItem.setMnemonicParsing(true);
             minimizeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
-            /*
-             * this.fullScreenMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN));
-             * 
-             * button.getScene().getAccelerators().put(
-             new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN), 
-             new Runnable() {
-             @Override public void run() {
-             button.fire();
-             }
-             }
-             );*/
+
             minimizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
-                    minimizeProperty().set(!minimizeProperty().get());
+                    switchMinimize();
                 }
             });
             contextMenu.getItems().add(minimizeMenuItem);
         }
         if (maximize != null) { // Utility Stage type
             maximizeMenuItem = new MenuItem(LOC.getString("Maximize"));
-            maximizeMenuItem.setMnemonicParsing(true);
             maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
-                    maximizeProperty().set(!maximizeProperty().get());
+                    switchMaximize();
                     contextMenu.hide(); // Stay stuck on screen
                 }
             });
@@ -494,13 +514,12 @@ public class Undecorator extends StackPane {
         // Fullscreen
         if (stageStyle != StageStyle.UTILITY) {
             fullScreenMenuItem = new CheckMenuItem(LOC.getString("FullScreen"));
-            fullScreenMenuItem.setMnemonicParsing(true);
             fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
                     // fake
                     //maximizeProperty().set(!maximizeProperty().get());
-                    undecoratorController.setFullScreen(!stage.isFullScreen());
+                    switchFullscreen();
                 }
             });
             fullScreenMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN));
@@ -510,11 +529,10 @@ public class Undecorator extends StackPane {
 
         // Close
         MenuItem closeMenuItem = new MenuItem(LOC.getString("Close"));
-        closeMenuItem.setMnemonicParsing(true);
         closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                closeProperty().set(!closeProperty().get());
+                switchClose();
             }
         });
         closeMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
@@ -534,11 +552,10 @@ public class Undecorator extends StackPane {
 
         // Close button
         close.setTooltip(new Tooltip(LOC.getString("Close")));
-        close.setMnemonicParsing(true);
         close.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                closeProperty().set(!closeProperty().get());
+                switchClose();
             }
         });
 
@@ -567,7 +584,7 @@ public class Undecorator extends StackPane {
             maximize.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
-                    maximizeProperty().set(!maximizeProperty().get());
+                    switchMaximize();
                 }
             });
         }
@@ -576,7 +593,7 @@ public class Undecorator extends StackPane {
             fullscreen.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
-                    fullscreenProperty().set(!fullscreenProperty().get());
+                    switchFullscreen();
                 }
             });
         }
@@ -587,12 +604,34 @@ public class Undecorator extends StackPane {
             minimize.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
-                    minimizeProperty().set(!minimizeProperty().get());
+                    switchMinimize();
                 }
             });
         }
         // Transfer stage title to undecorator tiltle label
         title.setText(stage.getTitle());
+    }
+
+    public void switchFullscreen() {
+        // Invoke runLater even if it's on EDT: Crash apps on Mac
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                undecoratorController.setFullScreen(!stage.isFullScreen());
+            }
+        });
+    }
+
+    public void switchMinimize() {
+        minimizeProperty().set(!minimizeProperty().get());
+    }
+
+    public void switchMaximize() {
+        maximizeProperty().set(!maximizeProperty().get());
+    }
+
+    public void switchClose() {
+        closeProperty().set(!closeProperty().get());
     }
 
     /**
@@ -766,12 +805,12 @@ public class Undecorator extends StackPane {
                 .autoReverse(true)
                 .cycleCount(3)
                 .onFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                //dockFeedback.setVisible(false);
-                //dockFeedbackPopup.hide();
-            }
-        })
+                    @Override
+                    public void handle(ActionEvent t) {
+                        //dockFeedback.setVisible(false);
+                        //dockFeedbackPopup.hide();
+                    }
+                })
                 .build();
         /*
          ScaleTransition scaleTransition = ScaleTransitionBuilder.create()
