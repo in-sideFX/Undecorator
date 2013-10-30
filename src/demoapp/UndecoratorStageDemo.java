@@ -62,7 +62,10 @@ public class UndecoratorStageDemo extends Application {
         undecorator.setAsStageDraggable(stage, node);
 
         Scene scene = new Scene(undecorator);
-
+        
+        // Install default Accelerators in the Scene
+        undecorator.installAccelerators(scene);
+        
         // Transparent scene and stage
         scene.setFill(Color.TRANSPARENT);
         stage.initStyle(StageStyle.TRANSPARENT);
