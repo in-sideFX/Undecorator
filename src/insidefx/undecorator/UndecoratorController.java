@@ -417,11 +417,13 @@ public class UndecoratorController {
         node.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                undecorator.setDockFeedbackInvisible();
-                setCursor(node, Cursor.DEFAULT);
-                initX = -1;
-                initY = -1;
-                dockActions(stage, t);
+                if (stage.isResizable()) {
+                    undecorator.setDockFeedbackInvisible();
+                    setCursor(node, Cursor.DEFAULT);
+                    initX = -1;
+                    initY = -1;
+                    dockActions(stage, t);
+                }
             }
         });
 
@@ -439,6 +441,9 @@ public class UndecoratorController {
      */
     void testDock(Stage stage, MouseEvent mouseEvent) {
 
+        if (!stage.isResizable()) {
+            return;
+        }
 
         int dockSide = getDockSide(mouseEvent);
         // Dock Left
@@ -466,7 +471,7 @@ public class UndecoratorController {
             Screen screen = screensForRectangle.get(0);
             Rectangle2D visualBounds = screen.getVisualBounds();
             // Dock Right (visualBounds = (javafx.geometry.Rectangle2D) Rectangle2D [minX = 1440.0, minY=300.0, maxX=3360.0, maxY=1500.0, width=1920.0, height=1200.0])
-            double x = visualBounds.getMinX() + visualBounds.getWidth()/2;
+            double x = visualBounds.getMinX() + visualBounds.getWidth() / 2;
             double y = visualBounds.getMinY();
             double width = visualBounds.getWidth() / 2;
             double height = visualBounds.getHeight();
@@ -546,7 +551,7 @@ public class UndecoratorController {
         else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
             savedBounds = new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
 
-            stage.setX(visualBounds.getWidth()/2 + visualBounds.getMinX());
+            stage.setX(visualBounds.getWidth() / 2 + visualBounds.getMinX());
             stage.setY(visualBounds.getMinY());
             stage.setWidth(visualBounds.getWidth() / 2);
             stage.setHeight(visualBounds.getHeight());
