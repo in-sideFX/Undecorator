@@ -17,7 +17,12 @@
     -fx-arc-width:25;
     -fx-arc-height:25;*/
 }
-
+/*
+    The title bar label
+*/
+.undecorator-label-titlebar{
+    -fx-text-fill: #000000;
+}
 /*
 *	Menu button
 */

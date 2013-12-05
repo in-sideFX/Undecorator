@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -23,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -35,8 +37,7 @@ public class UndecoratorStageDemo extends Application {
     private AreaChart areaChart;
     @FXML
     private PieChart pieChart;
-    
-    
+
     @Override
     @SuppressWarnings("CallToThreadDumpStack")
     public void start(final Stage stage) throws Exception {
@@ -52,7 +53,7 @@ public class UndecoratorStageDemo extends Application {
             ex.printStackTrace();
         }
 
-        Undecorator undecorator = new Undecorator(stage, root);
+        final Undecorator undecorator = new Undecorator(stage, root);
         // Customize it by CSS if needed:
         undecorator.getStylesheets().add("skin/undecorator.css");
 
@@ -62,9 +63,21 @@ public class UndecoratorStageDemo extends Application {
         undecorator.setAsStageDraggable(stage, node);
 
         Scene scene = new Scene(undecorator);
-        
+
         // Install default Accelerators in the Scene
         undecorator.installAccelerators(scene);
+        // Enable fade transition
+        undecorator.setFadeInTransition();
+  /*
+         * Fade transition on window closing request
+         */
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent we) {
+                we.consume();   // Do not hide
+                undecorator.setFadeOutTransition();
+            }
+        });
         
         // Transparent scene and stage
         scene.setFill(Color.TRANSPARENT);
@@ -121,6 +134,27 @@ public class UndecoratorStageDemo extends Application {
         }
         utilityStage.sizeToScene();
         utilityStage.show();
+    }
+
+    /**
+     * Show a non resizable Stage
+     *
+     * @param event
+     */
+    @FXML
+    @SuppressWarnings("CallToThreadDumpStack")
+    private void handleShowNonResizableStage(ActionEvent event) {
+        UndecoratorStageDemo undecoratorStageDemo = new UndecoratorStageDemo();
+        Stage stage = new Stage();
+        stage.setTitle("Not resizable stage");
+        stage.setResizable(false);
+        stage.setWidth(600);
+        stage.setMinHeight(400);
+        try {
+            undecoratorStageDemo.start(stage);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -188,13 +222,12 @@ public class UndecoratorStageDemo extends Application {
         areaChart.setHorizontalZeroLineVisible(true);
         areaChart.getData().addAll(series1, series2, series3);
 
-        ObservableList<PieChart.Data> pieChartData
-                = FXCollections.observableArrayList(
-                        new PieChart.Data("Grapefruit", 13),
-                        new PieChart.Data("Oranges", 25),
-                        new PieChart.Data("Plums", 10),
-                        new PieChart.Data("Pears", 22),
-                        new PieChart.Data("Apples", 30));
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Grapefruit", 13),
+                new PieChart.Data("Oranges", 25),
+                new PieChart.Data("Plums", 10),
+                new PieChart.Data("Pears", 22),
+                new PieChart.Data("Apples", 30));
         pieChart.setData(pieChartData);
         pieChart.setTitle("Imported Fruits");
 

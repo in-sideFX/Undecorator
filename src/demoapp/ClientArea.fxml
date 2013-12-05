@@ -57,6 +57,7 @@
                     <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                       <children>
                         <Button mnemonicParsing="false" onAction="#handleShowUtilityStage" text="Show Utility stage" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="4.0" />
+                        <Button mnemonicParsing="false" onAction="#handleShowNonResizableStage" text="Show non resizable stage" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="37.0" />
                       </children>
                     </AnchorPane>
                   </content>

@@ -3,7 +3,7 @@
   <information>
     <title>Undecorator</title>
     <vendor>In-SideFX</vendor>
-    <description>null</description>
+    <description>Sample JavaFX 2.0 application.</description>
     <offline-allowed/>
   </information>
   <resources>
@@ -11,7 +11,11 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Undecorator.jar" size="95772" download="eager" />
+    <jar href="Undecorator.jar" size="97438" download="eager" />
+    <jar href="lib/deploy.jar" size="2003171" download="eager" />
+    <jar href="lib/javaws.jar" size="451060" download="eager" />
+    <jar href="lib/jfxrt.jar" size="15269330" download="eager" />
+    <jar href="lib/plugin.jar" size="937696" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Undecorator" >
     <param name="requiredFXVersion" value="2.2+"/>

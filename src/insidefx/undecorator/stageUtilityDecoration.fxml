@@ -11,7 +11,7 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" pickOnBounds="false" prefHeight="400.0" prefWidth="600.0" snapToPixel="true" xmlns:fx="http://javafx.com/fxml">
   <children>
-    <Label fx:id="title" layoutY="7.0" mouseTransparent="true" prefHeight="21.0" prefWidth="546.0" text="title bar" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="22.0">
+    <Label fx:id="title" layoutY="7.0" mouseTransparent="true" prefHeight="21.0" prefWidth="546.0" styleClass="undecorator-label-titlebar" text="title bar" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="22.0">
       <effect>
         <Glow />
       </effect>

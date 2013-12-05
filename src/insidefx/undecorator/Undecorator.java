@@ -65,6 +65,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -232,11 +233,25 @@ public class Undecorator extends StackPane {
         resizeRect.setStroke(Color.TRANSPARENT);
         undecoratorController.setStageResizableWith(stage, resizeRect, RESIZE_PADDING, SHADOW_WIDTH);
 
+        // If not resizable (quick fix)
+        if (fullscreen != null) {
+            fullscreen.setVisible(stage.isResizable());
+        }
+        resize.setVisible(stage.isResizable());
+        if (maximize != null) {
+            maximize.setVisible(stage.isResizable());
+        }
+        if (minimize != null && !stage.isResizable()) {
+            AnchorPane.setRightAnchor(minimize, 34d);
+        }
+        
+        // Glass Pane
         glassPane = new Pane();
         glassPane.setMouseTransparent(true);
         buildDockFeedbackStage();
 
-        // TODO: how to programmatically get css values? wait for JavaFX custom CSS
+        title.getStyleClass().add("undecorator-label-titlebar");
+        // TODO: how to programmatically get css values? wait for JavaFX 8 custom CSS
         shadowRectangle.getStyleClass().add(backgroundStyleClass);
         // Do not intercept mouse events on stage's drop shadow
         shadowRectangle.setMouseTransparent(true);
@@ -298,11 +313,11 @@ public class Undecorator extends StackPane {
                                 .toX(66)
                                 .node(fullscreen)
                                 .onFinished(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        fullscreenButtonTransition = null;
-                                    }
-                                })
+                            @Override
+                            public void handle(ActionEvent t) {
+                                fullscreenButtonTransition = null;
+                            }
+                        })
                                 .build();
                         fullscreenButtonTransition.play();
                         fullscreen.setOpacity(0.2);
@@ -322,11 +337,11 @@ public class Undecorator extends StackPane {
                                 .toX(0)
                                 .node(fullscreen)
                                 .onFinished(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        fullscreenButtonTransition = null;
-                                    }
-                                })
+                            @Override
+                            public void handle(ActionEvent t) {
+                                fullscreenButtonTransition = null;
+                            }
+                        })
                                 .build();
 
                         fullscreenButtonTransition.play();
@@ -345,12 +360,14 @@ public class Undecorator extends StackPane {
      */
     public void installAccelerators(Scene scene) {
         // Accelerators
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN), new Runnable() {
-            @Override
-            public void run() {
-                switchFullscreen();
-            }
-        });
+        if (stage.isResizable()) {
+            scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN), new Runnable() {
+                @Override
+                public void run() {
+                    switchFullscreen();
+                }
+            });
+        }
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN), new Runnable() {
             @Override
             public void run() {
@@ -499,7 +516,7 @@ public class Undecorator extends StackPane {
             });
             contextMenu.getItems().add(minimizeMenuItem);
         }
-        if (maximize != null) { // Utility Stage type
+        if (maximize != null && stage.isResizable()) { // Utility Stage type
             maximizeMenuItem = new MenuItem(LOC.getString("Maximize"));
             maximizeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -512,7 +529,7 @@ public class Undecorator extends StackPane {
         }
 
         // Fullscreen
-        if (stageStyle != StageStyle.UTILITY) {
+        if (stageStyle != StageStyle.UTILITY && stage.isResizable()) {
             fullScreenMenuItem = new CheckMenuItem(LOC.getString("FullScreen"));
             fullScreenMenuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -609,6 +626,7 @@ public class Undecorator extends StackPane {
             });
         }
         // Transfer stage title to undecorator tiltle label
+
         title.setText(stage.getTitle());
     }
 
@@ -805,12 +823,12 @@ public class Undecorator extends StackPane {
                 .autoReverse(true)
                 .cycleCount(3)
                 .onFinished(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent t) {
-                        //dockFeedback.setVisible(false);
-                        //dockFeedbackPopup.hide();
-                    }
-                })
+            @Override
+            public void handle(ActionEvent t) {
+                //dockFeedback.setVisible(false);
+                //dockFeedbackPopup.hide();
+            }
+        })
                 .build();
         /*
          ScaleTransition scaleTransition = ScaleTransitionBuilder.create()

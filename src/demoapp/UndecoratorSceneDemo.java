@@ -42,6 +42,7 @@ public class UndecoratorSceneDemo extends Application {
     public void start(final Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setTitle("Undecorator Scene Demo");
+        
         // The UI (Client Area) to display
         Region root = null;
         try {
@@ -131,7 +132,26 @@ public class UndecoratorSceneDemo extends Application {
         utilityStage.sizeToScene();
         utilityStage.show();
     }
-
+    
+    /**
+     * Show a non resizable Stage
+     * @param event 
+     */
+    @FXML
+    @SuppressWarnings("CallToThreadDumpStack")
+    private void handleShowNonResizableStage(ActionEvent event) {
+        UndecoratorSceneDemo undecoratorSceneDemo = new UndecoratorSceneDemo();
+        Stage stage = new Stage();
+        stage.setTitle("Not resizable stage");
+        stage.setResizable(false);
+        stage.setWidth(600);
+        stage.setMinHeight(400);
+        try {
+            undecoratorSceneDemo.start(stage);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
     /**
      * Handles Utility stage buttons
      *

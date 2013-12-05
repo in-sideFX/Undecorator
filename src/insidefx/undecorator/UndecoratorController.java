@@ -2,8 +2,6 @@ package insidefx.undecorator;
 
 import java.util.logging.Level;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
@@ -264,6 +262,9 @@ public class UndecoratorController {
                     return; // maximized mode does not support resize
                 }
                 if (stage.isFullScreen()) {
+                    return;
+                }
+                if (!stage.isResizable()) {
                     return;
                 }
                 double x = mouseEvent.getX();

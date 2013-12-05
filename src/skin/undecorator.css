@@ -17,7 +17,12 @@
     -fx-arc-width:5;
     -fx-arc-height:5;
 }
-
+/*
+    The title bar label
+*/
+.undecorator-label-titlebar{
+   /* -fx-text-fill: #000000; if defined here, so way to override it in external apps*/
+}
 /*
 *	Menu button
 */
