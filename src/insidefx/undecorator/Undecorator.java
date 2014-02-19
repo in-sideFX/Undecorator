@@ -28,6 +28,7 @@
 package insidefx.undecorator;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -152,6 +153,12 @@ public class Undecorator extends StackPane {
     }
 
     public Undecorator(Stage stag, Region clientArea, String stageDecorationFxml, StageStyle st) {
+        create(stag, clientArea, getClass().getResource(stageDecorationFxml), st);
+    }
+    public Undecorator(Stage stag, Region clientArea, URL stageDecorationFxmlAsURL, StageStyle st) {
+        create(stag, clientArea, stageDecorationFxmlAsURL, st);
+    }
+    public void create(Stage stag, Region clientArea, URL stageDecorationFxmlAsURL, StageStyle st) {
         this.stage = stag;
         this.clientArea = clientArea;
 
@@ -214,7 +221,7 @@ public class Undecorator extends StackPane {
 
         // UI part of the decoration
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(stageDecorationFxml));
+            FXMLLoader fxmlLoader = new FXMLLoader(stageDecorationFxmlAsURL);
 //            fxmlLoader.setController(new StageDecorationController(this));
             fxmlLoader.setController(this);
             stageDecoration = (Pane) fxmlLoader.load();
@@ -244,7 +251,7 @@ public class Undecorator extends StackPane {
         if (minimize != null && !stage.isResizable()) {
             AnchorPane.setRightAnchor(minimize, 34d);
         }
-        
+
         // Glass Pane
         glassPane = new Pane();
         glassPane.setMouseTransparent(true);
@@ -492,7 +499,7 @@ public class Undecorator extends StackPane {
         shadowRectangle.getStyleClass().remove(backgroundStyleClass);
     }
 
-    public Rectangle getBackground() {
+    public Rectangle getBackgroundNode() {
         return shadowRectangle;
     }
 
@@ -751,6 +758,15 @@ public class Undecorator extends StackPane {
 
     public void removeGlassPane(Node node) {
         glassPane.getChildren().remove(node);
+    }
+
+    /**
+     * Returns the decoration (buttons...)
+     *
+     * @return
+     */
+    public Pane getStageDecorationNode() {
+        return stageDecoration;
     }
 
     /**
