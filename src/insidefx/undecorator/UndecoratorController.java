@@ -544,8 +544,20 @@ public class UndecoratorController {
 
             stage.setX(visualBounds.getMinX());
             stage.setY(visualBounds.getMinY());
-            stage.setWidth(visualBounds.getWidth() / 2);
-            stage.setHeight(visualBounds.getHeight());
+            // Respect Stage Max size
+            double width = visualBounds.getWidth() / 2;
+            if (stage.getMaxWidth() < width) {
+                width = stage.getMaxWidth();
+            }
+
+            stage.setWidth(width);
+
+            double height = visualBounds.getHeight();
+            if (stage.getMaxHeight() < height) {
+                height = stage.getMaxHeight();
+            }
+
+            stage.setHeight(height);
             undecorator.setShadow(false);
         } // Dock Right (visualBounds = [minX = 1440.0, minY=300.0, maxX=3360.0, maxY=1500.0, width=1920.0, height=1200.0])
         else if (mouseEvent.getScreenX() >= visualBounds.getMaxX() - 1) { // MaxX returns the width? Not width -1 ?!
@@ -553,8 +565,20 @@ public class UndecoratorController {
 
             stage.setX(visualBounds.getWidth() / 2 + visualBounds.getMinX());
             stage.setY(visualBounds.getMinY());
-            stage.setWidth(visualBounds.getWidth() / 2);
-            stage.setHeight(visualBounds.getHeight());
+            // Respect Stage Max size
+            double width = visualBounds.getWidth() / 2;
+            if (stage.getMaxWidth() < width) {
+                width = stage.getMaxWidth();
+            }
+
+            stage.setWidth(width);
+
+            double height = visualBounds.getHeight();
+            if (stage.getMaxHeight() < height) {
+                height = stage.getMaxHeight();
+            }
+
+            stage.setHeight(height);
             undecorator.setShadow(false);
         } else if (mouseEvent.getScreenY() <= visualBounds.getMinY()) { // Mac menu bar
             undecorator.maximizeProperty.set(true);

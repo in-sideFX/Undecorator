@@ -42,7 +42,7 @@ public class UndecoratorSceneDemo extends Application {
     public void start(final Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setTitle("Undecorator Scene Demo");
-        
+
         // The UI (Client Area) to display
         Region root = null;
         try {
@@ -77,7 +77,7 @@ public class UndecoratorSceneDemo extends Application {
         // Application icons
         Image image = new Image("/demoapp/in-sidefx.png");
         primaryStage.getIcons().addAll(image);
-        
+
         primaryStage.setScene(undecoratorScene);
         primaryStage.sizeToScene();
         primaryStage.toFront();
@@ -86,7 +86,7 @@ public class UndecoratorSceneDemo extends Application {
         Undecorator undecorator = undecoratorScene.getUndecorator();
         primaryStage.setMinWidth(undecorator.getMinWidth());
         primaryStage.setMinHeight(undecorator.getMinHeight());
-       
+
         // Feed Charts with fake data for demo
         initCharts();
         primaryStage.show();
@@ -132,10 +132,11 @@ public class UndecoratorSceneDemo extends Application {
         utilityStage.sizeToScene();
         utilityStage.show();
     }
-    
+
     /**
      * Show a non resizable Stage
-     * @param event 
+     *
+     * @param event
      */
     @FXML
     @SuppressWarnings("CallToThreadDumpStack")
@@ -152,6 +153,7 @@ public class UndecoratorSceneDemo extends Application {
             ex.printStackTrace();
         }
     }
+
     /**
      * Handles Utility stage buttons
      *
@@ -165,7 +167,9 @@ public class UndecoratorSceneDemo extends Application {
      * Demo purpose only, Fill charts with data
      */
     void initCharts() {
-
+        if (areaChart == null) {
+            return;
+        }
         final NumberAxis xAxis = new NumberAxis(1, 30, 1);
         final NumberAxis yAxis = new NumberAxis(-5, 27, 5);
         xAxis.setForceZeroInRange(true);
@@ -217,13 +221,12 @@ public class UndecoratorSceneDemo extends Application {
         areaChart.setHorizontalZeroLineVisible(true);
         areaChart.getData().addAll(series1, series2, series3);
 
-        ObservableList<PieChart.Data> pieChartData
-                = FXCollections.observableArrayList(
-                        new PieChart.Data("Grapefruit", 13),
-                        new PieChart.Data("Oranges", 25),
-                        new PieChart.Data("Plums", 10),
-                        new PieChart.Data("Pears", 22),
-                        new PieChart.Data("Apples", 30));
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Grapefruit", 13),
+                new PieChart.Data("Oranges", 25),
+                new PieChart.Data("Plums", 10),
+                new PieChart.Data("Pears", 22),
+                new PieChart.Data("Apples", 30));
         pieChart.setData(pieChartData);
         pieChart.setTitle("Imported Fruits");
 
