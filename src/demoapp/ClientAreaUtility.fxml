@@ -12,7 +12,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" pickOnBounds="true" prefHeight="300.0" prefWidth="600.0" style="" xmlns:fx="http://javafx.com/fxml">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="true" prefHeight="300.0" prefWidth="600.0" style="-fx-background-color:transparent;" xmlns:fx="http://javafx.com/fxml">
   <children>
     <HBox prefHeight="32.0" prefWidth="640.0" />
     <AnchorPane id="draggableNode" maxHeight="-1.0" maxWidth="-1.0" pickOnBounds="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
