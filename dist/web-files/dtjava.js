@@ -1,26 +1,6 @@
 /*
- * Copyright (c) 2006, 2013, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
+ * Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 /**
@@ -66,7 +46,10 @@ var dtjava = function() {
 
     //set to true to disable FX auto install (before release)
     var noFXAutoInstall = false;
-    
+
+    // page has no body yet, postpone plugin installation
+    postponeNativePluginInstallation = false;
+
     // JRE version we start to have JRE and FX true co-bundle
     var minJRECobundleVersion = "1.7.0_06";
 
@@ -154,6 +137,11 @@ var dtjava = function() {
             //but it does not work with IE9 in standards mode
             //Reverting to alternative - use execScript
             ie = isDef(window.execScript);
+            // IE 11 does not support execScript any more and no exception is thrown, so lets use more naive test.
+            // http://msdn.microsoft.com/en-us/library/ie/bg182625(v=vs.85).aspx
+            if (!ie) { // We do not want to overwrite if ie was detected above.
+                ie = (navigator.userAgent.match(/Trident/i) != null);
+            }
         } catch (ee) {
             //if javafx app is in the iframe and content of main window is coming from other domain
             //  then some browsers may restrict access to outer window properties,
@@ -233,12 +221,23 @@ var dtjava = function() {
                     invokeCallbacks, false);
             }
             if (ua.ie && ua.win) {
-                d.attachEvent("onreadystatechange", function() {
-                    if (d.readyState == "complete") {
-                        d.detachEvent("onreadystatechange", arguments.callee);
-                        invokeCallbacks();
-                    }
-                });
+                // http://msdn.microsoft.com/en-us/library/ie/ms536343(v=vs.85).aspx
+                // attachEvent is not supported by IE 11.
+                if (isDef(d.addEventListener)) {
+                    d.addEventListener("onreadystatechange", function() {
+                        if (d.readyState == "complete") {
+                            d.removeEventListener("onreadystatechange", arguments.callee, false);
+                            invokeCallbacks();
+                        }
+                    }, false);
+                } else {
+                    d.attachEvent("onreadystatechange", function() {
+                        if (d.readyState == "complete") {
+                            d.detachEvent("onreadystatechange", arguments.callee);
+                            invokeCallbacks();
+                        }
+                    });
+                }
                 if (w == top) { // if not inside an iframe
                     (function() {
                         if (cbDone) {
@@ -369,7 +368,7 @@ var dtjava = function() {
          * then return value is null.
          */
         this.jreInstallerURL = function(locale) {
-            if (this.os && (this.jre == "old" || this.jre == "none")) {
+            if (!this.os && (this.jre == "old" || this.jre == "none")) {
                 return getJreUrl(locale);
             }
             return null;
@@ -981,7 +980,7 @@ var dtjava = function() {
         if (versionString != null) {
             var c = versionString.charAt(versionString.length - 1);
             //if it is not digit we want to strip last char
-            if (c <= '0' || c >= '9') {
+            if (c < '0' || c > '9') {
                 versionString = versionString.substring(0, versionString.length - 1);
             }
         }
@@ -1006,8 +1005,9 @@ var dtjava = function() {
 
         var c = query.charAt(query.length - 1);
 
-        //if it is not explicit pattern but does not have update version then need to append *
-        if (c != '+' && c != '*' && (query.indexOf('_') != -1 && c != '_')) {
+        // If the version pattern does not include all four version components,
+        // and does not end with an asterisk or plus sign, then need to append *
+        if (c != '+' && c != '*' && !(query.indexOf('_') != -1 && c != '_')) {
             query = query + "*";
             c = '*';
         }
@@ -1040,7 +1040,7 @@ var dtjava = function() {
                 if (qArr[idx] < vArr[idx]) {
                     //query is smaller
                     return true;
-                } else if (qArr[idx] < vArr[idx]) {
+                } else if (qArr[idx] > vArr[idx]) {
                     //query is larger => fail
                     return false;
                 }
@@ -1061,6 +1061,12 @@ var dtjava = function() {
     //    DT plugin if we can (as old DT may make it not possible to autostart)
     function doublecheckJrePresence() {
         if (!haveDTLite()) { //basically IE on windows or Old JRE on windows
+          if (postponeNativePluginInstallation && notNull(d.body)) {
+              // Native Plugin installation was postponed, as the page didn't have
+              // body at that time. Try to install the plugin now.
+              installNativePlugin();
+              postponeNativePluginInstallation = false;
+          }
           var p = getPlugin();
           if (p != null) {
             return true;
@@ -1289,6 +1295,12 @@ var dtjava = function() {
                     p = getPlugin();
                     //typeof did not work in IE
                     var v = p.getInstalledFXVersion(platform.javafx);
+                    // If not found then try for the latest family (e.g. if the requested FX version is "2.2" and "8.0.5" is installed
+                    // we should not report that FX is old or does not exist. Instead we should continue with "8.0.5" and than either relaunch
+                    // with the requested JRE or offer the user to launch the app using the latest JRE installed).
+		    if (v == "" || v == null) {
+			v = p.getInstalledFXVersion(platform.javafx + '+');
+		    }
                     //if found we should get version string, otherwise empty string or null. If found then fx=false!
                     if (v == "" || v == null) {
                         v = p.getInstalledFXVersion("2.0+"); //check for any FX version
@@ -1352,7 +1364,7 @@ var dtjava = function() {
         if (!notNull(loc)) {
             loc = guessLocale();
         }
-        return 'http://jdl.sun.com/webapps/getjava/BrowserRedirect?host=java.com' +
+        return 'http://java.com/dt-redirect?' +
             ((notNull(window.location) && notNull(window.location.href)) ?
                 ('&returnPage=' + window.location.href) : '') +
             (notNull(loc) ? ('&locale=' + loc) : '');
@@ -1969,6 +1981,7 @@ var dtjava = function() {
             addOnDomReady(function() {
                 installNativePlugin();
             });
+            postponeNativePluginInstallation = true;
             return;
         }
 

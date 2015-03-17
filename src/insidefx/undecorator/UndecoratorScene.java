@@ -114,7 +114,9 @@ public class UndecoratorScene extends Scene {
     public void setBackgroundStyle(String style) {
         undecorator.getBackgroundNode().setStyle(style);
     }
-
+    public void setBackgroundOpacity(double opacity) {
+        undecorator.getBackgroundNode().setOpacity(opacity);
+    }
     public void setBackgroundPaint(Paint paint) {
         undecorator.removeDefaultBackgroundStyleClass();
         undecorator.getBackgroundNode().setFill(paint);

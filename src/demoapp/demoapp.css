@@ -1,6 +1,6 @@
 /* 
     Document   : Undecorator
-    Created on : Jan 15, 2013, 8:42:25 AM
+    Created on : Dec 19, 2014
     Author     : In-SideFX
     Description:
         Demo app purpose
@@ -10,8 +10,32 @@
 }
 .logo-label{
     -fx-font-weight:bold;
-    -fx-text-fill: gray;
+    -fx-text-fill: black;
 }
 .clientarea-background{
     -fx-background-color: white;
+}
+
+.decoration-background{
+    -fx-stroke-width: 0;
+    -fx-arc-width:5px;
+    -fx-arc-height:5px;
+}
+/*
+    Defines the rectangle responsible for the shadow
+*/
+.decoration-shadow{
+    -fx-fill: black;
+    -fx-stroke-width: 0;
+    -fx-arc-width:20px;
+    -fx-arc-height:20px;
+}
+/*
+ Used to declare the definition of stage resize zone
+*/
+.decoration-resize{
+    -fx-fill:null;  /* avoid mouse events in the middle*/
+    -fx-border-color: transparent;
+    -fx-border-width: 7;
+    -fx-border-insets: 0;
 }

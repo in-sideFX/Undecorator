@@ -13,74 +13,63 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="380.0" minWidth="450.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" style="" styleClass="clientarea-background" xmlns:fx="http://javafx.com/fxml">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="380.0" minWidth="450.0" pickOnBounds="true" prefHeight="400.0" prefWidth="640.0" styleClass="clientarea-background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <AnchorPane id="" pickOnBounds="false" prefHeight="37.0" prefWidth="640.0" visible="true">
+    <AnchorPane id="" pickOnBounds="false" prefHeight="37.0" prefWidth="640.0" style="-fx-background-color: transparent;" visible="true">
       <children>
-        <Label styleClass="logo-label" text="in-sideFX" AnchorPane.rightAnchor="187.0" AnchorPane.topAnchor="-5.0" />
-        <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" styleClass="logo" AnchorPane.rightAnchor="146.0" AnchorPane.topAnchor="-7.0" />
+        <Label styleClass="logo-label" text="in-sideFX" AnchorPane.rightAnchor="187.0" AnchorPane.topAnchor="0.0" />
+        <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" styleClass="logo" AnchorPane.rightAnchor="146.0" AnchorPane.topAnchor="0.0" />
       </children>
     </AnchorPane>
-    <AnchorPane id="draggableNode" maxHeight="-1.0" maxWidth="-1.0" pickOnBounds="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-      <children>
-        <BorderPane prefHeight="282.0" prefWidth="517.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-          <bottom>
-            <TextArea id="" opacity="1.0" prefHeight="34.0" prefWidth="624.0" wrapText="true">
-              <effect>
-                <DropShadow offsetX="2.0" offsetY="2.0" />
-              </effect>
-              <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
-              </BorderPane.margin>
-            </TextArea>
-          </bottom>
-          <center>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-              <children>
-                <AreaChart fx:id="areaChart" minHeight="130.0" prefHeight="147.0" prefWidth="421.0" AnchorPane.bottomAnchor="165.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="7.0">
-                  <xAxis>
-                    <NumberAxis side="BOTTOM" />
-                  </xAxis>
-                  <yAxis>
-                    <NumberAxis side="LEFT" />
-                  </yAxis>
-                </AreaChart>
-                <PieChart id="PieChart" fx:id="pieChart" prefHeight="162.0" prefWidth="407.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-              </children>
+      <HBox fx:id="clientAreaHbox" style="-fx-background-color: #eeeeeecc; -fx-background-radius: 5;" VBox.vgrow="ALWAYS">
+         <children>
+      <Accordion fx:id="accordion" prefHeight="264.0" prefWidth="238.0">
+        <panes>
+          <TitledPane expanded="false" prefHeight="250.0" prefWidth="238.0" text="Features">
+            <content>
+              <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="173.0" prefWidth="214.0">
+                           <children>
+                              <Slider fx:id="sliderOpacity" blockIncrement="0.1" layoutX="138.0" layoutY="117.0" max="1.0" min="0.1" prefHeight="16.0" prefWidth="81.0" value="1.0" />
+                              <Label layoutX="10.0" layoutY="115.0" text="Client Area opacity:" />
+                              <Label layoutX="7.0" layoutY="9.0" prefHeight="91.0" prefWidth="217.0" text="All graphical settings are exposed in the undecorator.css. Since Undecorator in now transparent, your client area could also be:" wrapText="true" />
+                           </children>
+                        </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane prefHeight="262.0" prefWidth="238.0" text="Stages" fx:id="x1">
+            <content>
+              <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                  <Button mnemonicParsing="false" onAction="#handleShowUtilityStage" text="Show Utility stage" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="4.0" />
+                  <Button mnemonicParsing="false" onAction="#handleShowNonResizableStage" text="Show non resizable stage" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="37.0" />
+                </children>
+              </AnchorPane>
+            </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
+      <AnchorPane HBox.hgrow="ALWAYS">
+               <children>
+                  <ScrollPane layoutX="14.0" layoutY="49.0" prefHeight="300.0" prefWidth="380.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="40.0">
+                     <content>
+                        <ImageView pickOnBounds="true" preserveRatio="true" smooth="false">
+                           <image>
+                              <Image url="@snippet.png" />
+                           </image>
+                        </ImageView>
+                     </content>
+                  </ScrollPane>
+                  <Hyperlink fx:id="hyperlink" layoutX="254.0" layoutY="6.0" text="more detais here..." AnchorPane.rightAnchor="14.0" />
+                  <Label layoutX="14.0" layoutY="8.0" text="How to enable it into your project:" AnchorPane.leftAnchor="14.0" />
+               </children>
             </AnchorPane>
-          </center>
-          <left>
-            <Accordion>
-              <expandedPane>
-                <TitledPane fx:id="x1" animated="false" text="Features">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <Button mnemonicParsing="false" onAction="#handleShowUtilityStage" text="Show Utility stage" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="4.0" />
-                        <Button mnemonicParsing="false" onAction="#handleShowNonResizableStage" text="Show non resizable stage" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="37.0" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-              </expandedPane>
-              <panes>
-                <fx:reference source="x1" />
-                <TitledPane animated="false" text="Enhancement">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                  </content>
-                </TitledPane>
-              </panes>
-            </Accordion>
-          </left>
-          <padding>
-            <Insets />
-          </padding>
-        </BorderPane>
-      </children>
-    </AnchorPane>
+         </children>
+      </HBox>
   </children>
   <stylesheets>
     <URL value="@demoapp.css" />
   </stylesheets>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
 </VBox>

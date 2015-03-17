@@ -1,27 +1,44 @@
 /* 
     Document   : Undecorator
-    Created on : Jan 15, 2013, 8:42:25 AM
+    Created on : Dec 19, 2014
     Author     : In-SideFX
     Description:
-        Demo purpose
+        Demo app purpose
 */
 
 /*
     The Stage background.
     Currently a Rectangle node
 */
-
-.undecorator-background {
-    -fx-fill:#ffffff;
-    /* -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, #eeeeee88, #55555588 75%, dimgray);*/
-    -fx-arc-width:5;
-    -fx-arc-height:5;
+.decoration-background{
+    -fx-fill: rgba(255,255,255,0.9);
+    -fx-stroke-width: 0;
+    -fx-arc-width:20px;
+    -fx-arc-height:20px;
+}
+/*
+    Defines the rectangle responsible for the shadow
+*/
+.decoration-shadow{
+    -fx-fill: black;
+    -fx-stroke-width: 0;
+    -fx-arc-width:20px;
+    -fx-arc-height:20px;
+}
+/*
+ Used to declare the definition of stage resize zone
+*/
+.decoration-resize{
+    -fx-fill:null;  /* avoid mouse events in the middle*/
+    -fx-border-color: transparent;
+    -fx-border-width: 7;
+    -fx-border-insets: 0;
 }
 /*
     The title bar label
 */
 .undecorator-label-titlebar{
-   /* -fx-text-fill: #000000; if defined here, so way to override it in external apps*/
+    /* -fx-text-fill: #000000; if defined here, so way to override it in external apps*/
 }
 /*
 *	Menu button
@@ -30,13 +47,13 @@
     -fx-background-radius: 0;
     -fx-border-style: null;
     -fx-background-color: null;
-    -fx-background-image:url("./menu.png");
+    -fx-background-image:url("./menu-hover.png");
     -fx-background-repeat:no-repeat;
 }
 
 .decoration-button-menu:hover{
     -fx-background-color: null;
-    -fx-background-image:url("./menu-hover.png");
+    -fx-background-image:url("./menu.png");
     -fx-background-repeat:no-repeat;
 }
 /*

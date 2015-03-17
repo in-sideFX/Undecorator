@@ -1,9 +1,9 @@
 /* 
     Document   : Undecorator
-    Created on : Jan 15, 2013, 8:42:25 AM
+    Created on : Dec 19, 2014
     Author     : In-SideFX
     Description:
-        Demo purpose
+        Demo app purpose
 */
 
 /*
@@ -11,11 +11,25 @@
     Currently a Rectangle node
 */
 
-.undecorator-background {
-    -fx-fill:#ffffff;
-    /* -fx-fill: radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, #eeeeee88, #55555588 75%, dimgray);
-    -fx-arc-width:25;
-    -fx-arc-height:25;*/
+.decoration-background{
+    -fx-fill: rgba(255,255,255,0.9);
+    -fx-stroke-width: 0;
+    -fx-arc-width:20px;
+    -fx-arc-height:20px;
+}
+
+.decoration-shadow{
+    -fx-fill: black;
+    -fx-stroke-width: 0;
+    -fx-arc-width:20px;
+    -fx-arc-height:20px;
+}
+
+.decoration-resize{
+    -fx-fill:null;  /* avoid mouse events in the middle*/
+    -fx-border-color: transparent;
+    -fx-border-width: 7;
+    -fx-border-insets: 0;
 }
 /*
     The title bar label

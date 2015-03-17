@@ -1,24 +1,25 @@
 /**
- * Demo purpose In-SideFX (Un)decorator for JavaFX scene License: You can use
- * this code for any kind of purpose, commercial or not.
+ * Demo purpose In-SideFX (Un)decorator for JavaFX scene License: You can use this code for any kind of purpose,
+ * commercial or not.
  */
 package demoapp;
 
 import insidefx.undecorator.Undecorator;
 import insidefx.undecorator.UndecoratorScene;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,28 +34,28 @@ public class UndecoratorSceneDemo extends Application {
 
     Stage primaryStage;
     @FXML
-    private AreaChart areaChart;
+    Accordion accordion;
     @FXML
-    private PieChart pieChart;
+    HBox clientAreaHbox;
+    @FXML
+    Slider sliderOpacity;
+    @FXML
+    Hyperlink hyperlink;
 
     @Override
-    @SuppressWarnings("CallToThreadDumpStack")
     public void start(final Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setTitle("Undecorator Scene Demo");
 
         // The UI (Client Area) to display
-        Region root = null;
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ClientArea.fxml"));
-            fxmlLoader.setController(this);
-            root = (Region) fxmlLoader.load();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ClientArea.fxml"));
+        fxmlLoader.setController(this);
+        Region root = (Region) fxmlLoader.load();
+
         // The Undecorator as a Scene
         final UndecoratorScene undecoratorScene = new UndecoratorScene(primaryStage, root);
-
+        // Overrides defaults
+        undecoratorScene.addStylesheet("demoapp/demoapp.css");
         // Enable fade transition
         undecoratorScene.setFadeInTransition();
 
@@ -64,12 +65,12 @@ public class UndecoratorSceneDemo extends Application {
 //        undecoratorScene.setAsStageDraggable(stage, node);
 
         /*
-         * Fade transition on window closing request
+         * Fade out transition on window closing request
          */
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent we) {
-                we.consume();   // Do not hide
+                we.consume();   // Do not hide yet
                 undecoratorScene.setFadeOutTransition();
             }
         });
@@ -77,6 +78,7 @@ public class UndecoratorSceneDemo extends Application {
         // Application icons
         Image image = new Image("/demoapp/in-sidefx.png");
         primaryStage.getIcons().addAll(image);
+        initUI();
 
         primaryStage.setScene(undecoratorScene);
         primaryStage.sizeToScene();
@@ -87,32 +89,41 @@ public class UndecoratorSceneDemo extends Application {
         primaryStage.setMinWidth(undecorator.getMinWidth());
         primaryStage.setMinHeight(undecorator.getMinHeight());
 
-        // Feed Charts with fake data for demo
-        initCharts();
         primaryStage.show();
     }
 
+    void initUI() {
+        accordion.setExpandedPane(accordion.getPanes().get(1));
+        clientAreaHbox.opacityProperty().bind(sliderOpacity.valueProperty());
+        hyperlink.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://arnaudnouard.wordpress.com/category/javafx/undecorator/"));
+                } catch (Exception ex) {
+                }
+            }
+        });
+    }
+
     /**
-     * The button's handler in the ClientArea.fxml Manage the UTILITY mode
-     * stages
+     * The button's handler in the ClientArea.fxml Manage the UTILITY mode stage
      *
      * @param event
      */
     @FXML
-    @SuppressWarnings("CallToThreadDumpStack")
-    private void handleShowUtilityStage(ActionEvent event) {
+    private void handleShowUtilityStage(ActionEvent event) throws IOException {
         // Stage Utility usage
-        Region root = null;
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ClientAreaUtility.fxml"));
-            fxmlLoader.setController(this);
-            root = (Region) fxmlLoader.load();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ClientAreaUtility.fxml"));
+        fxmlLoader.setController(this);
+        Region root = (Region) fxmlLoader.load();
         Stage utilityStage = new Stage();
         utilityStage.setTitle("Stage Utility type demo");
         UndecoratorScene scene = new UndecoratorScene(utilityStage, StageStyle.UTILITY, root, null);
+        // Overrides defaults
+        scene.addStylesheet("demoapp/demoapp.css");
+
         utilityStage.setScene(scene);
         utilityStage.initModality(Modality.WINDOW_MODAL);
         utilityStage.initOwner(primaryStage);
@@ -139,19 +150,14 @@ public class UndecoratorSceneDemo extends Application {
      * @param event
      */
     @FXML
-    @SuppressWarnings("CallToThreadDumpStack")
-    private void handleShowNonResizableStage(ActionEvent event) {
+    private void handleShowNonResizableStage(ActionEvent event) throws Exception {
         UndecoratorSceneDemo undecoratorSceneDemo = new UndecoratorSceneDemo();
         Stage stage = new Stage();
         stage.setTitle("Not resizable stage");
         stage.setResizable(false);
         stage.setWidth(600);
         stage.setMinHeight(400);
-        try {
-            undecoratorSceneDemo.start(stage);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        undecoratorSceneDemo.start(stage);
     }
 
     /**
@@ -161,75 +167,6 @@ public class UndecoratorSceneDemo extends Application {
      */
     public void handleUtilityAction(ActionEvent event) {
         ((Node) event.getSource()).getScene().getWindow().hide();
-    }
-
-    /**
-     * Demo purpose only, Fill charts with data
-     */
-    void initCharts() {
-        if (areaChart == null) {
-            return;
-        }
-        final NumberAxis xAxis = new NumberAxis(1, 30, 1);
-        final NumberAxis yAxis = new NumberAxis(-5, 27, 5);
-        xAxis.setForceZeroInRange(true);
-
-        areaChart.setTitle("Temperature Monitoring (in Degrees C)");
-
-        XYChart.Series series1 = new XYChart.Series();
-        series1.setName("March");
-        series1.getData().add(new XYChart.Data(1, -2));
-        series1.getData().add(new XYChart.Data(3, -4));
-        series1.getData().add(new XYChart.Data(6, 0));
-        series1.getData().add(new XYChart.Data(9, 5));
-        series1.getData().add(new XYChart.Data(12, -4));
-        series1.getData().add(new XYChart.Data(15, 6));
-        series1.getData().add(new XYChart.Data(18, 8));
-        series1.getData().add(new XYChart.Data(21, 14));
-        series1.getData().add(new XYChart.Data(24, 4));
-        series1.getData().add(new XYChart.Data(27, 6));
-        series1.getData().add(new XYChart.Data(30, 6));
-
-        XYChart.Series series2 = new XYChart.Series();
-        series2.setName("April");
-        series2.getData().add(new XYChart.Data(1, 4));
-        series2.getData().add(new XYChart.Data(3, 10));
-        series2.getData().add(new XYChart.Data(6, 15));
-        series2.getData().add(new XYChart.Data(9, 8));
-        series2.getData().add(new XYChart.Data(12, 5));
-        series2.getData().add(new XYChart.Data(15, 18));
-        series2.getData().add(new XYChart.Data(18, 15));
-        series2.getData().add(new XYChart.Data(21, 13));
-        series2.getData().add(new XYChart.Data(24, 19));
-        series2.getData().add(new XYChart.Data(27, 21));
-        series2.getData().add(new XYChart.Data(30, 21));
-
-        XYChart.Series series3 = new XYChart.Series();
-        series3.setName("May");
-        series3.getData().add(new XYChart.Data(1, 20));
-        series3.getData().add(new XYChart.Data(3, 15));
-        series3.getData().add(new XYChart.Data(6, 13));
-        series3.getData().add(new XYChart.Data(9, 12));
-        series3.getData().add(new XYChart.Data(12, 14));
-        series3.getData().add(new XYChart.Data(15, 18));
-        series3.getData().add(new XYChart.Data(18, 25));
-        series3.getData().add(new XYChart.Data(21, 25));
-        series3.getData().add(new XYChart.Data(24, 23));
-        series3.getData().add(new XYChart.Data(27, 26));
-        series3.getData().add(new XYChart.Data(30, 26));
-
-        areaChart.setHorizontalZeroLineVisible(true);
-        areaChart.getData().addAll(series1, series2, series3);
-
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Grapefruit", 13),
-                new PieChart.Data("Oranges", 25),
-                new PieChart.Data("Plums", 10),
-                new PieChart.Data("Pears", 22),
-                new PieChart.Data("Apples", 30));
-        pieChart.setData(pieChartData);
-        pieChart.setTitle("Imported Fruits");
-
     }
 
     public static void main(String[] args) {
