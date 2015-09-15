@@ -1,4 +1,6 @@
-Note: The latest version of this project is: https://github.com/in-sideFX/UndecoratorBis
+------------------------------------------------------------------------------------------------------------
+       DEPRECATED: The latest version of this project is: https://github.com/in-sideFX/UndecoratorBis
+------------------------------------------------------------------------------------------------------------
 
 Undecorator
 ===========
