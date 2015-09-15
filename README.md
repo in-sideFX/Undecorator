@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------------------------------------
-       DEPRECATED: The latest version of this project is: <a href="https://github.com/in-sideFX/UndecoratorBis">UndecoratorBis</a>
+       DEPRECATED: The latest version of this project is UndecoratorBis
+       https://github.com/in-sideFX/UndecoratorBis
 ------------------------------------------------------------------------------------------------------------
 
 Undecorator
